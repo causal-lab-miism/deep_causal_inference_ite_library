@@ -9,4 +9,4 @@ Paper link: arxive link?
 Contact: andrei.sirazitdinov@medma.uni-heidelberg.de, marcus.buchwald@medma.uni-heidelberg.de
 
 ### Requirements
-The code was tested with Python 3.9, Tensorflow 2.8, Tensorflow Probability 0.16.0, numpy.
+The code was tested with Python 3.9, Tensorflow 2.8, Tensorflow Probability 0.16.0, Numpy.
