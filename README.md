@@ -8,5 +8,20 @@ Paper link: arxive link?
 
 Contact: andrei.sirazitdinov@medma.uni-heidelberg.de, marcus.buchwald@medma.uni-heidelberg.de
 
-### Requirements
-The code was tested with Python 3.9, Tensorflow 2.8, Tensorflow Probability 0.16.0, Numpy.
+### Requirements:
+1. Python 3.9, 
+2. Tensorflow 2.8, 
+3. Tensorflow Probability 0.16.0, 
+4. Numpy
+
+To run the code simply use:
+```
+python main.py --dataset_name [dataset name] --model_name [model name]
+```
+See the full list of available models and datasets in main.py.  
+
+The file hyperparameters.py contains hyperparameters such as batch size or learning rate for the presented models.  
+
+Note, that our code performs hyperparameter search at first execution for each method to find the other hyperparameters.
+
+We output PEHE for each sub dataset and after training on all datasets an average PEHE with 95% confidence interval.
