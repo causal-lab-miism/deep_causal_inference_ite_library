@@ -18,6 +18,8 @@ To run the code simply use:
 ```
 python main.py --dataset_name [dataset name] --model_name [model name]
 ```
+Alternatively use Jupyter notebooks.  
+
 See the full list of available models and datasets in main.py.  
 
 The file hyperparameters.py contains hyperparameters such as batch size or learning rate for the presented models.  
