@@ -1,22 +1,26 @@
-from models.HyperCFRNet import *
-from models.HyperDKLITE import *
-# from models.DKLITE import *
-from models.TARnet1 import *
-from models.HyperRLearner import *
-from models.HyperSLearner import *
-from models.XLearner import *
-from models.HyperTLearner import *
-from models.TEDVAE import *
-from models.DragonNet import *
-from models.HyperGANITE import *
-from models.HyperCEVAE import *
-from models.BVNICEModel import *
+# from models.CFRNet_hyper import *
+# from models.DKLITE_hyper import *
+from models.TARnet_hyper import *
+# from models.RLearner_hyper import *
+from models.SLearner_hyper import *
+# from models.XLearner_hyper import *
+from models.TLearner_hyper import *
+# from models.TEDVAE_hyper import *
+# from models.DragonNet_hyper import *
+# from models.GANITE_hyper import *
+# from models.CEVAE_hyper import *
 import scipy.stats
 import argparse
+import logging
+import warnings
 from hyperparameters import *
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+warnings.filterwarnings("ignore")
+logging.getLogger('tensorflow').disabled = True
+
 gpus = tf.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
-  tf.config.experimental.set_memory_growth(gpu, True)
+    tf.config.experimental.set_memory_growth(gpu, True)
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
@@ -30,10 +34,11 @@ def mean_confidence_interval(data, confidence=0.95):
 
 
 def main(args):
-    model_names = {"TARnet": TARnetModel1,  "XLearner": XLearner, "TLearner": HyperTLearnerModel,
-                   "CFRNet": CFRNet1, "DragonNet": DragonNet, "DKLITE": HyperDKLITE,
-                   "GANITE": GANITE, "SLearner": SLearner, "RLearner": RLearner, "TEDVAE": TEDVAE,
-                   "CEVAE": CEVAE}
+    model_names = {"TARnet": TARnetModel, "TLearner": TLearnerModel, "SLearner": SLearner}
+    # model_names = {"TARnetModel": TARnetModel, "TModel": TLearner, "XLearner": XLearner, "TLearner": TLearner,
+    #                "CFRNet": CFRNet, "DragonNet": DragonNet, "DKLITE": DKLITE,
+    #                "GANITE": GANITE, "SLearner": SLearner, "RLearner": RLearner, "TEDVAE": TEDVAE,
+    #                "CEVAE": CEVAE}
 
     datasets = {'ihdp_a', 'ihdp_b', 'acic', 'twins', 'jobs'}
     ipm_list = {'mmdsq', 'wasserstein', 'weighted', None}
@@ -57,8 +62,8 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Causal Model')
     parser.add_argument("--model-name", default="TLearner", type=str)
-    parser.add_argument("--ipm-type", default='wasserstein', type=str)
-    parser.add_argument("--dataset-name", default="ihdp_b", type=str)
+    parser.add_argument("--ipm-type", default=None, type=str)
+    parser.add_argument("--dataset-name", default="jobs", type=str)
     parser.add_argument("--num", default=100, type=int)
     args = parser.parse_args()
     main(args)
