@@ -14,9 +14,13 @@ Contact: andrei.sirazitdinov@medma.uni-heidelberg.de, marcus.buchwald@medma.uni-
 3. Tensorflow Probability 0.16.0, 
 4. Numpy
 
-To run the code simply use:
+To run the code use:
 ```
-python main.py --dataset_name [dataset name] --model_name [model name]
+python main.py [-h] [--model-name MODEL_NAME] [--ipm-type IPM_TYPE] [--dataset-name DATASET_NAME] [--num NUM]
+
+Example:
+python main.py --model-name TARnet --dataset-name ihdp_b --num 100 --ipm-type None
+
 ```
 Alternatively use Jupyter notebooks.  
 
