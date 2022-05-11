@@ -26,4 +26,4 @@ The file hyperparameters.py contains hyperparameters such as batch size or learn
 
 Note, that our code performs hyperparameter search at first execution for each method to find the other hyperparameters.
 
-We output PEHE for each sub dataset and after training on all datasets an average PEHE with 95% confidence interval.
+We output PEHE or policy risk for each sub dataset and after training on all datasets an average PEHE or policy risk with 95% confidence interval.
