@@ -10,9 +10,9 @@ Currently the following causal inference methods present in the library: TLearne
   
 
 ### Requirements:
-1. Python 3.9, 
-2. Tensorflow 2.8, 
-3. Tensorflow Probability 0.16.0, 
+1. Python 3.9
+2. Tensorflow 2.8 
+3. Tensorflow Probability 0.16.0 
 4. Numpy
 
 To run the code use:
