@@ -1,4 +1,4 @@
-## Review of Deep Learning Methods for ITE Estimation with Automatic Hyperparameter Optimization
+## Review of Causal Inference Deep Learning Methods for ITE Estimation with Automatic Hyperparameter Optimization
 
 Tensorflow implementation of methods presented in:
 
