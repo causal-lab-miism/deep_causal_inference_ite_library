@@ -6,6 +6,9 @@ Andrei Sirazitdinov, Marcus Buchwald, Jürgen Hesser, and Vincent Heuveline _"Re
 
 Contact: andrei.sirazitdinov@medma.uni-heidelberg.de, marcus.buchwald@medma.uni-heidelberg.de
 
+Currently the following causal inference methods present in the library: TLearner, SLearner, RLearner, XLearner, TARNet, CFR-Wasserstein, CFR-Weighted, CFR-MMD, DragonNet, TEDVAE, CEVAE, GANITE, DKLITE.
+  
+
 ### Requirements:
 1. Python 3.9, 
 2. Tensorflow 2.8, 
