@@ -1,11 +1,10 @@
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, TerminateOnNaN
+from tensorflow.keras.callbacks import ReduceLROnPlateau, TerminateOnNaN
 
 
-def callbacks(early_stopping_patience):
+def callbacks(rlr_monitor):
     cbacks = [
         TerminateOnNaN(),
-        EarlyStopping(monitor='val_loss', patience=early_stopping_patience, min_delta=0.),
-        ReduceLROnPlateau(monitor='loss', factor=0.5, patience=5, verbose=0, mode='auto',
+        ReduceLROnPlateau(monitor=rlr_monitor, factor=0.5, patience=5, verbose=0, mode='auto',
                           min_delta=0., cooldown=0, min_lr=1e-8)
     ]
     return cbacks

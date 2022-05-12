@@ -1,22 +1,17 @@
-# from models.CFRNet_hyper import *
-# from models.DKLITE_hyper import *
+from models.CFRNet_hyper import *
+from models.DKLITE_hyper import *
 from models.TARnet_hyper import *
-# from models.RLearner_hyper import *
+from models.RLearner_hyper import *
 from models.SLearner_hyper import *
-# from models.XLearner_hyper import *
+from models.XLearner_hyper import *
 from models.TLearner_hyper import *
-# from models.TEDVAE_hyper import *
-# from models.DragonNet_hyper import *
-# from models.GANITE_hyper import *
-# from models.CEVAE_hyper import *
+from models.TEDVAE_hyper import *
+from models.DragonNet_hyper import *
+from models.GANITE_hyper import *
+from models.CEVAE_hyper import *
 import scipy.stats
 import argparse
-import logging
-import warnings
 from hyperparameters import *
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-warnings.filterwarnings("ignore")
-logging.getLogger('tensorflow').disabled = True
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
@@ -34,11 +29,10 @@ def mean_confidence_interval(data, confidence=0.95):
 
 
 def main(args):
-    model_names = {"TARnet": TARnetModel, "TLearner": TLearnerModel, "SLearner": SLearner}
-    # model_names = {"TARnetModel": TARnetModel, "TModel": TLearner, "XLearner": XLearner, "TLearner": TLearner,
-    #                "CFRNet": CFRNet, "DragonNet": DragonNet, "DKLITE": DKLITE,
-    #                "GANITE": GANITE, "SLearner": SLearner, "RLearner": RLearner, "TEDVAE": TEDVAE,
-    #                "CEVAE": CEVAE}
+    model_names = {"TARnet": TARnet, "TModel": TLearner, "XLearner": XLearner, "TLearner": TLearner,
+                   "CFRNet": CFRNet, "DragonNet": DragonNet, "DKLITE": DKLITE,
+                   "GANITE": GANITE, "SLearner": SLearner, "RLearner": RLearner, "TEDVAE": TEDVAE,
+                   "CEVAE": CEVAE}
 
     datasets = {'ihdp_a', 'ihdp_b', 'acic', 'twins', 'jobs'}
     ipm_list = {'mmdsq', 'wasserstein', 'weighted', None}
@@ -51,9 +45,9 @@ def main(args):
         params['dataset_name'] = args.dataset_name
         params['ipm_type'] = args.ipm_type
         model = model_name(params)
-        pehe_list = model.evaluate_performance()
-        m, h = mean_confidence_interval(pehe_list, confidence=0.95)
-        print(f'mean PEHE test: {m} | std PEHE test: {h}')
+        metric_list = model.evaluate_performance()
+        m, h = mean_confidence_interval(metric_list, confidence=0.95)
+        print(f'mean test: {m} | std test: {h}')
         return 0
     else:
         raise ValueError(f'{args.model_name} has not been implemented yet!')
@@ -61,9 +55,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Causal Model')
-    parser.add_argument("--model-name", default="TLearner", type=str)
+    parser.add_argument("--model-name", default="TARnet", type=str)
     parser.add_argument("--ipm-type", default=None, type=str)
-    parser.add_argument("--dataset-name", default="jobs", type=str)
+    parser.add_argument("--dataset-name", default="ihdp_a", type=str)
     parser.add_argument("--num", default=100, type=int)
     args = parser.parse_args()
     main(args)
