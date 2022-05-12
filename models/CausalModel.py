@@ -69,7 +69,7 @@ class CausalModel:
         num = self.num
         pehe_list = list()
         for folder in range(1, num+1):
-            len_folder_files = len(os.listdir('./ACIC/' + str(folder) + '/'))
+            len_folder_files = len(os.listdir('./Datasets/ACIC/' + str(folder) + '/'))
             for file in range(len_folder_files):
                 kwargs = {'folder_ind': folder, 'file_ind': file}
                 self.train_and_evaluate(pehe_list, **kwargs)
@@ -197,21 +197,10 @@ class CausalModel:
         if self.params['binary']:
             y0_pred = tf.cast((y0_pred > 0.5), tf.float32)
             y1_pred = tf.cast((y1_pred > 0.5), tf.float32)
-            # bce = tf.keras.losses.BinaryCrossentropy(from_logits=False)
-            # loss0 = bce(((1 - t_true) * y_true), y0_pred, sample_weight=[0.84, 0.16])
-            # loss1 = bce((t_true * y_true, y1_pred), sample_weight=[0.84, 0.16])
 
             loss0 = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=(1 - t_true) * y_true,
                                                                            logits=y0_pred))
             loss1 = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=t_true * y_true, logits=y1_pred))
-
-            # loss0 = tf.reduce_mean(tf.nn.weighted_cross_entropy_with_logits(labels=(1 - t_true) * y_true,
-            #                                                                 logits=y0_pred, pos_weight=0))
-            # loss1 = tf.reduce_mean(tf.nn.weighted_cross_entropy_with_logits(labels=t_true * y_true, logits=y1_pred,
-            #                                                                 pos_weight=0))
-
-            # loss0 = tf.keras.losses.binary_crossentropy((1 - t_true) * y_true, y0_pred)
-            # loss1 = tf.keras.losses.binary_crossentropy(t_true * y_true, y1_pred)
         else:
             loss0 = tf.reduce_sum((1. - t_true) * tf.square(y_true - y0_pred))
             loss1 = tf.reduce_sum(t_true * tf.square(y_true - y1_pred))
@@ -219,17 +208,17 @@ class CausalModel:
 
     def load_data(self, **kwargs):
         if self.dataset_name == 'ihdp_a':
-            path_data = "./IHDP_a"
+            path_data = "./Datasets/IHDP_a"
             return self.load_ihdp_data(path_data, kwargs.get('count'))
         elif self.dataset_name == 'ihdp_b':
-            path_data = "./IHDP_b"
+            path_data = "./Datasets/IHDP_b"
             return self.load_ihdp_data(path_data, kwargs.get('count'))
         elif self.dataset_name == 'acic':
             return self.load_acic_data(kwargs.get('folder_ind'), kwargs.get('file_ind'))
         elif self.dataset_name == 'twins':
             return self.load_twins_data(kwargs.get('count'))
         elif self.dataset_name == 'jobs':
-            path_data = "./JOBS"
+            path_data = "./Datasets/JOBS"
             return self.load_jobs_data(path_data, kwargs.get('count'))
         else:
             print('No such dataset. The available datasets are: ', 'ihdp_a, ihdp_b, acic, twins, jobs')

@@ -1,3 +1,4 @@
+from models.CausalModel import *
 from models.CFRNet_hyper import *
 from models.DKLITE_hyper import *
 from models.TARnet_hyper import *

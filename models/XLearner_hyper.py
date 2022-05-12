@@ -1,12 +1,13 @@
-from models.TLearner import *
-from models.TARnet import *
 from keras import regularizers
+from models.CausalModel import *
 from utils.set_seed import setSeed
 import keras_tuner as kt
 from tensorflow.keras.callbacks import EarlyStopping, TerminateOnNaN
+from tensorflow.keras import regularizers
+from tensorflow.keras import Model
+from tensorflow.keras.optimizers import Adam
 
-
-class HyperELearner(kt.HyperModel, CausalModel):
+class HyperXLearner(kt.HyperModel, CausalModel):
     def __init__(self, params):
         super().__init__()
         self.params = params
