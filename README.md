@@ -23,7 +23,7 @@ Example:
 python main.py --model-name TARnet --dataset-name ihdp_b --num 100 --ipm-type None
 
 ```
-Alternatively use Jupyter notebooks.  
+Alternatively use Jupyter notebook.  
 
 See the full list of available models and datasets in main.py.  
 
