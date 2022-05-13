@@ -124,92 +124,13 @@ class CEVAEModel(Model):
         self.params = params
         self.kl_weight = 1.0/params['batch_size']
 
-        # self.hp_fc_latent_y = hp.Int('hp_fc_latent_y', min_value=2, max_value=10, step=1)
-        # self.hp_hidden_phi_latent_y = hp.Int('hp_hidden_phi_latent_y', min_value=16, max_value=512, step=16)
-        # self.hp_hidden_phi_y0 = hp.Int('hp_hidden_phi_y0', min_value=16, max_value=512, step=16)
-        # self.hp_hidden_phi_y1 = hp.Int('hp_hidden_phi_y1', min_value=16, max_value=512, step=16)
-        #
-        # self.hp_hidden_phi_z = hp.Int('hp_hidden_phi_z', min_value=16, max_value=512, step=16)
-        # self.hp_fc_phi_z = hp.Int('hp_fc_latent_y', min_value=2, max_value=10, step=1)
-        #
-        # self.hp_hidden_phi_enc_y0 = hp.Int('hp_hidden_phi_enc_y0', min_value=16, max_value=512, step=16)
-        # self.hp_hidden_phi_enc_y1 = hp.Int('hp_hidden_phi_enc_y1', min_value=16, max_value=512, step=16)
-        #
-        # self.hp_fc_x_latent = hp.Int('hp_fc_x_latent', min_value=2, max_value=10, step=1)
-        # self.hp_hidden_x_latent = hp.Int('hp_hidden_x_latent', min_value=16, max_value=512, step=16)
-        #
-        # self.hp_hidden_phi_dec_x = hp.Int('hp_hidden_phi_dec_x', min_value=16, max_value=512, step=16)
-        # self.hp_hidden_phi_dec_t = hp.Int('hp_hidden_phi_dec_t', min_value=16, max_value=512, step=16)
-        #
-        # self.hp_fc_dec_y0 = hp.Int('hp_fc_dec_y', min_value=2, max_value=10, step=1)
-        # self.hp_hidden_dec_y0 = hp.Int('hp_hidden_dec_y', min_value=16, max_value=512, step=16)
-        # self.hp_fc_dec_y1 = hp.Int('hp_fc_dec_y', min_value=2, max_value=10, step=1)
-        # self.hp_hidden_dec_y1 = hp.Int('hp_hidden_dec_y', min_value=16, max_value=512, step=16)
-        #
-        #
-        # self.t_distribution = BernoulliNet_KL(units=self.params['latent_dim'], out_size=1, num_layers=1, params=params,
-        #                                       name='t_distribution', kl_weight=self.kl_weight)
-        #
-        # self.y_latent_space = FullyConnected(n_fc=self.hp_fc_latent_y, hidden_phi=self.hp_hidden_phi_latent_y,
-        #                                      out_size=1, final_activation=None, kernel_init=None,
-        #                                      kernel_reg=regularizers.l2(params['reg_l2']), name='y_latent_space')
-        #
-        # self.y0_distribution = GaussianNet_KL(units=self.hp_hidden_phi_y0, out_size=1, num_layers=2,
-        #                                       params=params, name='y0_distribution', kl_weight=self.kl_weight)
-        # self.y1_distribution = GaussianNet_KL(units=self.hp_hidden_phi_y1, out_size=1, num_layers=2,
-        #                                       params=params, name='y1_distribution', kl_weight=self.kl_weight)
-        #
-        # self.z_latent_space = FullyConnected(n_fc=self.hp_fc_phi_z, hidden_phi=self.hp_hidden_phi_z,
-        #                                      out_size=1, final_activation=None, kernel_init=params['kernel_init'],
-        #                                      kernel_reg=regularizers.l2(params['reg_l2']), name='z_latent_space')
-        #
-        # self.encoder_y0 = GaussianNet_KL(units=self.hp_hidden_phi_enc_y0, out_size=params['latent_dim'], num_layers=2,
-        #                                  params=params, name='encoder_y0')
-        # self.encoder_y1 = GaussianNet_KL(units=self.hp_hidden_phi_enc_y1, out_size=params['latent_dim'], num_layers=2,
-        #                                  params=params, name='encoder_y1')
-        #
-        # self.x_latent_space = FullyConnected(n_fc=self.hp_fc_x_latent, hidden_phi=self.hp_hidden_x_latent,
-        #                                      out_size=1, final_activation=None, kernel_init=params['kernel_init'],
-        #                                      kernel_reg=regularizers.l2(params['reg_l2']), name='x_latent_space')
-        #
-        # self.decoder_x_bin = BernoulliNet(units=self.hp_hidden_phi_dec_x, out_size=params['num_bin'], num_layers=2,
-        #                                   params=params, name='x_bin_decoder')
-        #
-        # self.decoder_x_cont = GaussianNet(units=self.hp_hidden_phi_dec_x, out_size=params['num_cont'], num_layers=2,
-        #                                   params=params, name='x_cont_decoder')
-        #
-        # self.decoder_t = BernoulliNet(units=self.hp_hidden_phi_dec_t, out_size=1, num_layers=2, params=params,
-        #                               name='t_distribution')
-        #
-        # """Note that the original paper only samples mean and sets variance = 1 for y0|z and y1|z"""
-        #
-        # self.decoder_y0 = GaussianNet(units=self.hp_hidden_dec_y0, out_size=1,
-        #                               num_layers=self.hp_fc_dec_y0, params=params, name='decoder_y0')
-        #
-        # self.decoder_y1 = GaussianNet(units=self.hp_hidden_dec_y1, out_size=1,
-        #                               num_layers=self.hp_fc_dec_y1, params=params, name='decoder_y1')
-
         self.hp_fc_latent_y = hp.Int('hp_fc_latent_y', min_value=2, max_value=5, step=1)
         self.hp_hidden_phi_latent_y = hp.Int('hp_hidden_phi_latent_y', min_value=16, max_value=512, step=16)
-        # self.hp_hidden_phi_y0 = hp.Int('hp_hidden_phi_y0', min_value=16, max_value=512, step=16)
-        # self.hp_hidden_phi_y1 = hp.Int('hp_hidden_phi_y1', min_value=16, max_value=512, step=16)
-
-        # self.hp_hidden_phi_z = hp.Int('hp_hidden_phi_z', min_value=16, max_value=64, step=8)
-        # self.hp_fc_phi_z = hp.Int('hp_fc_latent_z', min_value=2, max_value=8, step=1)
-
-        # self.hp_hidden_phi_enc_y0 = hp.Int('hp_hidden_phi_enc_y0', min_value=16, max_value=512, step=16)
-        # self.hp_hidden_phi_enc_y1 = hp.Int('hp_hidden_phi_enc_y1', min_value=16, max_value=512, step=16)
 
         self.hp_fc_x_latent = hp.Int('hp_fc_x_latent', min_value=2, max_value=8, step=1)
         self.hp_hidden_x_latent = hp.Int('hp_hidden_x_latent', min_value=16, max_value=64, step=8)
 
-        # self.hp_hidden_phi_dec_x = hp.Int('hp_hidden_phi_dec_x', min_value=16, max_value=512, step=16)
         self.hp_hidden_phi_dec_t = hp.Int('hp_hidden_phi_dec_t', min_value=16, max_value=64, step=8)
-
-        # self.hp_fc_dec_y0 = hp.Int('hp_fc_dec_y', min_value=2, max_value=10, step=1)
-        # self.hp_hidden_dec_y0 = hp.Int('hp_hidden_dec_y', min_value=16, max_value=512, step=16)
-        # self.hp_fc_dec_y1 = hp.Int('hp_fc_dec_y', min_value=2, max_value=10, step=1)
-        # self.hp_hidden_dec_y1 = hp.Int('hp_hidden_dec_y', min_value=16, max_value=512, step=16)
 
         self.t_distribution = BernoulliNet(units=self.params['latent_dim'], out_size=1, num_layers=1, params=params,
                                            name='t_distribution')
