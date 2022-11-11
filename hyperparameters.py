@@ -84,19 +84,27 @@ def find_params(model_name, dataset_name):
 
     params_TARnet_IHDP_a = {'dataset_name': "ihdp_a", 'num': 100, 'lr': 1e-4, 'patience': 40, 'batch_size': 64,
                             'reg_l2': .01, 'activation': 'linear', 'epochs': 300, 'binary': False, 'verbose': 0,
-                            'val_split': 0.0, 'kernel_init': 'RandomNormal', 'max_trials': 10}
+                            'val_split': 0.0, 'kernel_init': 'RandomNormal', 'max_trials': 10, 'defaults': True,
+                            'n_fc': 3, 'n_hidden_phi': 200, 'n_hidden_y0': 3, 'hidden_y0': 100, 'n_hidden_y1': 3,
+                            'hidden_y1': 100}
 
     params_TARnet_IHDP_b = {'dataset_name': "ihdp_b", 'num': 100, 'lr': 1e-4, 'patience': 5, 'batch_size': 32,
                             'reg_l2': .01, 'activation': 'linear', 'epochs': 300, 'binary': False, 'verbose': 0,
-                            'val_split': 0.0, 'kernel_init': 'GlorotNormal', 'max_trials': 10}
+                            'val_split': 0.0, 'kernel_init': 'GlorotNormal', 'max_trials': 10, 'defaults': True,
+                            'n_fc': 3, 'n_hidden_phi': 200, 'n_hidden_y0': 3, 'hidden_y0': 100, 'n_hidden_y1': 3,
+                            'hidden_y1': 100}
 
     params_TARnet_ACIC = {'dataset_name': "acic", 'num': 77, 'lr': 1e-3, 'patience': 40, 'batch_size': 256,
                           'reg_l2': .01, 'activation': 'linear', 'epochs': 300, 'binary': False, 'verbose': 0,
-                          'val_split': 0.0, 'kernel_init': 'RandomNormal', 'max_trials': 10}
+                          'val_split': 0.0, 'kernel_init': 'RandomNormal', 'max_trials': 10, 'defaults': True,
+                            'n_fc': 3, 'n_hidden_phi': 200, 'n_hidden_y0': 3, 'hidden_y0': 200, 'n_hidden_y1': 3,
+                            'hidden_y1': 200}
 
     params_TARnet_JOBS = {'dataset_name': "jobs", 'num': 100, 'lr': 1e-2, 'patience': 40, 'batch_size': 256,
                           'reg_l2': .01,  'activation': 'sigmoid', 'epochs': 30, 'binary': True,
-                          'val_split': 0.0, 'verbose': 0, 'kernel_init': 'GlorotNormal', 'max_trials': 20}
+                          'val_split': 0.0, 'verbose': 0, 'kernel_init': 'GlorotNormal', 'max_trials': 20,
+                          'defaults': True, 'n_fc': 3, 'n_hidden_phi': 200, 'n_hidden_y0': 3, 'hidden_y0': 200,
+                          'n_hidden_y1': 3, 'hidden_y1': 200}
 
     """DRAGONNET"""
 

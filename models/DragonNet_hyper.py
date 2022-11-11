@@ -115,28 +115,28 @@ class DragonNetModel(Model):
     def __init__(self, name, params, hp, **kwargs):
         super(DragonNetModel, self).__init__(name=name, **kwargs)
         self.params = params
-        self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=16, max_value=512, step=16)
+        self.hp_fc = hp.Int('n_fc', min_value=2, max_value=10, step=1)
+        self.hp_hidden_phi = hp.Int('n_hidden_phi', min_value=16, max_value=512, step=16)
         self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi, final_activation='elu',
                                  out_size=self.hp_hidden_phi, kernel_init=params['kernel_init'], kernel_reg=None,
                                  name='fc')
 
-        self.hp_fc_y0 = hp.Int('hp_fc_y0', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi_y0 = hp.Int('hp_hidden_phi_y0', min_value=16, max_value=512, step=16)
+        self.hp_fc_y0 = hp.Int('n_hidden_y0', min_value=2, max_value=10, step=1)
+        self.hp_hidden_phi_y0 = hp.Int('hidden_y0', min_value=16, max_value=512, step=16)
         self.pred_y0 = FullyConnected(n_fc=self.hp_fc_y0, hidden_phi=self.hp_hidden_phi_y0,
                                       final_activation=params['activation'], out_size=1,
                                       kernel_init=params['kernel_init'],
                                       kernel_reg=regularizers.l2(params['reg_l2']), name='y0')
 
-        self.hp_fc_y1 = hp.Int('hp_fc_y1', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi_y1 = hp.Int('hp_hidden_phi_y1', min_value=16, max_value=512, step=16)
+        self.hp_fc_y1 = hp.Int('n_hidden_y1', min_value=2, max_value=10, step=1)
+        self.hp_hidden_phi_y1 = hp.Int('hidden_y1', min_value=16, max_value=512, step=16)
         self.pred_y1 = FullyConnected(n_fc=self.hp_fc_y1, hidden_phi=self.hp_hidden_phi_y1,
                                       final_activation=params['activation'], out_size=1,
                                       kernel_init=params['kernel_init'],
                                       kernel_reg=regularizers.l2(params['reg_l2']), name='y1')
 
-        self.hp_fc_t = hp.Int('hp_fc_t', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi_t = hp.Int('hp_hidden_phi_t', min_value=16, max_value=512, step=16)
+        self.hp_fc_t = hp.Int('n_fc_t', min_value=2, max_value=10, step=1)
+        self.hp_hidden_phi_t = hp.Int('hidden_t', min_value=16, max_value=512, step=16)
         self.pred_t = FullyConnected(n_fc=self.hp_fc_t, hidden_phi=self.hp_hidden_phi_t,
                                      final_activation='sigmoid', out_size=1,
                                      kernel_init=params['kernel_init'],
