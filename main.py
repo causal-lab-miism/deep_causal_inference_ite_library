@@ -13,7 +13,8 @@ from models.CEVAE_hyper import *
 import scipy.stats
 import argparse
 from hyperparameters import *
-
+os.environ['TF_DISABLE_SEGMENT_REDUCTION_OP_DETERMINISM_EXCEPTIONS']='1'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 gpus = tf.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
@@ -56,8 +57,8 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Causal Model')
-    parser.add_argument("--model-name", default="TARnet", type=str)
-    parser.add_argument("--ipm-type", default=None, type=str)
+    parser.add_argument("--model-name", default="DKLITE", type=str)
+    parser.add_argument("--ipm-type", default='weighted', type=str)
     parser.add_argument("--dataset-name", default="ihdp_b", type=str)
     parser.add_argument("--num", default=100, type=int)
     args = parser.parse_args()

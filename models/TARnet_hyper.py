@@ -34,18 +34,18 @@ class TarnetModel(Model):
         super(TarnetModel, self).__init__(name=name, **kwargs)
         self.params = params
         self.hp_n_fc = hp.Int('n_fc', min_value=2, max_value=10, step=1)
-        self.hp_n_hidden_phi = hp.Int('n_hidden_phi', min_value=16, max_value=512, step=16)
+        self.hp_n_hidden_phi = hp.Int('hidden_phi', min_value=16, max_value=512, step=16)
         self.fc = FullyConnected(n_fc=self.hp_n_fc, hidden_phi=self.hp_n_hidden_phi, final_activation='elu',
                                  out_size=self.hp_n_hidden_phi, kernel_init=params['kernel_init'], kernel_reg=None,
                                  name='fc')
-        self.hp_n_hidden_0 = hp.Int('n_hidden_y0', min_value=2, max_value=10, step=1)
+        self.hp_n_hidden_0 = hp.Int('n_fc_y0', min_value=2, max_value=10, step=1)
         self.hp_hidden_y0 = hp.Int('hidden_y0', min_value=16, max_value=512, step=16)
         self.pred_y0 = FullyConnected(n_fc=self.hp_n_hidden_0, hidden_phi=self.hp_hidden_y0,
                                       final_activation=params['activation'], out_size=1,
                                       kernel_init=params['kernel_init'],
                                       kernel_reg=regularizers.l2(params['reg_l2']), name='y0')
 
-        self.hp_n_hidden_1 = hp.Int('n_hidden_y1', min_value=2, max_value=10, step=1)
+        self.hp_n_hidden_1 = hp.Int('n_fc_y1', min_value=2, max_value=10, step=1)
         self.hp_hidden_y1 = hp.Int('hidden_y1', min_value=16, max_value=512, step=16)
         self.pred_y1 = FullyConnected(n_fc=self.hp_n_hidden_1, hidden_phi=self.hp_hidden_y1,
                                       final_activation=params['activation'], out_size=1,
@@ -94,8 +94,8 @@ class TARnet(CausalModel):
         best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
 
         if self.params['defaults']:
-            best_hps.values = {'n_fc': self.params['n_fc'], 'n_hidden_phi': self.params['n_hidden_phi'],
-                               'n_hidden_y0': self.params['n_hidden_y0'], 'n_hidden_y1': self.params['n_hidden_y1'],
+            best_hps.values = {'n_fc': self.params['n_fc'], 'hidden_phi': self.params['hidden_phi'],
+                               'n_fc_y0': self.params['n_fc_y0'], 'n_fc_y1': self.params['n_fc_y1'],
                                'hidden_y1': self.params['hidden_y1'], 'hidden_y0': self.params['hidden_y0']}
 
         model = tuner.hypermodel.build(best_hps)
@@ -109,9 +109,9 @@ class TARnet(CausalModel):
 
         if count == 0:
             print(f"""The hyperparameter search is complete. the optimal hyperparameters are
-                  layer is n_fc={best_hps.get('n_fc')} hidden_phi = {best_hps.get('n_hidden_phi')}
-                  hidden_y1 = {best_hps.get('hidden_y1')} n_hidden_y1 = {best_hps.get('n_hidden_y1')}
-                  hidden_y0 = {best_hps.get('hidden_y0')}  n_hidden_y0 = {best_hps.get('n_hidden_y0')}""")
+                  layer is n_fc={best_hps.get('n_fc')} hidden_phi = {best_hps.get('hidden_phi')}
+                  hidden_y1 = {best_hps.get('hidden_y1')} n_fc_y1 = {best_hps.get('n_fc_y1')}
+                  hidden_y0 = {best_hps.get('hidden_y0')}  n_fc_y0 = {best_hps.get('n_fc_y0')}""")
             print(model.summary())
 
         return model

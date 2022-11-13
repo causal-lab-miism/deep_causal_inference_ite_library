@@ -119,12 +119,6 @@ class DKLITELoss(Loss):
         y0_pred = tf.matmul(z_0, mean_0_gp) + mean_0
         y1_pred = tf.matmul(z_1, mean_1_gp) + mean_1
 
-        # print(np.mean(np.square(Y[T==0] - Y_hat_test[:, 0][np.squeeze(T==0)])) + np.mean(np.square(Y[T==1] - Y_hat_test[:, 1][np.squeeze(T==1)])))
-        # y0_pred = tf.gather(y0_pred, tf.where(t < 0.5)[:, 0])
-        # y1_pred = tf.gather(y1_pred, tf.where(t > 0.5)[:, 0])
-        # loss0 = tf.reduce_mean(tf.square(y_0 - y0_pred))
-        # loss1 = tf.reduce_mean(tf.square(y_1 - y1_pred))
-
         loss0 = tf.reduce_mean((1. - t) * tf.square(y - y0_pred))
         loss1 = tf.reduce_mean(t * tf.square(y - y1_pred))
 
@@ -173,7 +167,7 @@ class DKLITE(CausalModel):
         self.params = params
         self.folder_ind = None
 
-    def fit_model(self, x, y, t, seed):
+    def fit_model(self, x, y, t, seed, count):
         directory_name = 'params/' + self.params['dataset_name']
         if self.dataset_name == 'acic':
             directory_name = directory_name + f'/{self.params["model_name"]}'
@@ -198,10 +192,13 @@ class DKLITE(CausalModel):
         best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
 
         model = tuner.hypermodel.build(best_hps)
-
-        # print(f"""The hyperparameter search is complete. the optimal hyperparameters are
-        #       layer is n_fc_encoder={best_hps.get('n_fc_encoder')} hidden_phi_encoder = {best_hps.get('hidden_phi_encoder')}
-        #       n_fc_decoder = {best_hps.get('n_fc_decoder')} hidden_phi_decoder = {best_hps.get('hidden_phi_decoder')}""")
+        if self.params['defaults']:
+            best_hps.values = {'n_fc_encoder': self.params['n_fc_encoder'], 'hidden_phi_encoder': self.params['hidden_phi_encoder'],
+                               'n_fc_decoder': self.params['n_fc_decoder'], 'hidden_phi_decoder': self.params['hidden_phi_decoder']}
+        if count == 0:
+            print(f"""The hyperparameter search is complete. the optimal hyperparameters are
+                  layer is n_fc_encoder={best_hps.get('n_fc_encoder')} hidden_phi_encoder = {best_hps.get('hidden_phi_encoder')}
+                  n_fc_decoder = {best_hps.get('n_fc_decoder')} hidden_phi_decoder = {best_hps.get('hidden_phi_decoder')}""")
 
         model.fit(x=x, y=ytx,
                   callbacks=callbacks('loss'),
@@ -257,11 +254,11 @@ class DKLITE(CausalModel):
 
     def train_and_evaluate(self, metric_list, **kwargs):
         data_train, data_test = self.load_data(**kwargs)
-
+        count = kwargs.get('count')
         if self.params['binary']:
-            model = self.fit_model(data_train['x'], data_train['y'], data_train['t'], seed=0)
+            model = self.fit_model(data_train['x'], data_train['y'], data_train['t'], count=count, seed=0)
         else:
-            model = self.fit_model(data_train['x'], data_train['ys'], data_train['t'], seed=0)
+            model = self.fit_model(data_train['x'], data_train['ys'], data_train['t'], count=count, seed=0)
 
         concat_pred = self.evaluate(data_test, data_train, model)
 
