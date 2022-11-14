@@ -6,7 +6,8 @@ def find_params(model_name, dataset_name):
     params_SLearner_IHDP_a = {'dataset_name': "ihdp_a", 'num': 100, 'lr': 1e-3, 'patience': 40,
                               'batch_size': 64, 'reg_l2': .01, 'activation': 'linear',
                               'epochs': 300, 'binary': False, 'n_fc': 9, 'verbose': 0, 'val_split': 0.0,
-                              'kernel_init': 'RandomNormal', 'max_trials': 10}
+                              'kernel_init': 'RandomNormal', 'max_trials': 10, 'defaults': True,
+                              'hp_fc': 3, 'hp_hidden_phi': 200}
 
     params_SLearner_IHDP_b = {'dataset_name': "ihdp_b", 'num': 100, 'lr': 1e-3, 'patience': 40,
                               'batch_size': 64, 'reg_l2': .01, 'activation': 'linear',
@@ -109,12 +110,16 @@ def find_params(model_name, dataset_name):
     """DRAGONNET"""
 
     params_DragonNet_IHDP_a = {'dataset_name': "ihdp_a", 'num': 100, 'lr': 1e-4, 'patience': 40, 'batch_size': 64,
-                               'reg_l2': .01, 'activation': 'linear', 'epochs': 300, 'binary': False,
-                               'verbose': 0, 'kernel_init': 'RandomNormal', 'val_split': 0.0, 'max_trials': 10}
+                               'reg_l2': .01, 'activation': 'linear', 'epochs': 300, 'binary': False, 'dafaults': True,
+                               'verbose': 0, 'kernel_init': 'RandomNormal', 'val_split': 0.0, 'max_trials': 10,
+                               'n_fc': 3, 'hidden_phi': 200, 'n_fc_y0': 3, 'hidden_y0': 100, 'n_fc_y1': 3,
+                                'hidden_y1': 100, 'n_fc_t': 1, 'hidden_t': 1}
 
     params_DragonNet_IHDP_b = {'dataset_name': "ihdp_b", 'num': 100, 'lr': 1e-4, 'patience': 5, 'batch_size': 32,
                                'reg_l2': .01, 'activation': 'linear', 'epochs': 300, 'binary': False, 'verbose': 0,
-                               'kernel_init': 'GlorotNormal', 'val_split': 0.0, 'max_trials': 10}
+                               'kernel_init': 'GlorotNormal', 'val_split': 0.0, 'max_trials': 10,  'n_fc': 3,
+                               'hidden_phi': 200, 'n_fc_y0': 3, 'hidden_y0': 100, 'n_fc_y1': 3, 'dafaults': True,
+                                'hidden_y1': 100, 'n_fc_t': 1, 'hidden_t': 1}
 
     params_DragonNet_ACIC = {'dataset_name': "acic", 'num': 77, 'lr': 1e-4, 'patience': 40, 'batch_size': 256,
                              'reg_l2': .01, 'activation': 'linear', 'epochs': 300, 'binary': False, 'val_split': 0.0,

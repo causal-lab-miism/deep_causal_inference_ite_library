@@ -36,8 +36,8 @@ class SModel(Model):
     def __init__(self, params, hp, name='slearner', **kwargs):
         super(SModel, self).__init__(name=name, **kwargs)
         self.params = params
-        self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=16, max_value=512, step=16)
+        self.hp_fc = hp.Int('n_fc', min_value=2, max_value=10, step=1)
+        self.hp_hidden_phi = hp.Int('hidden_phi', min_value=16, max_value=512, step=16)
         self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi,
                                  final_activation=params['activation'], out_size=1,
                                  kernel_init=params['kernel_init'], kernel_reg=None, name='fc')
@@ -82,6 +82,8 @@ class SLearner(CausalModel):
         tuner.search(x_t, y, epochs=50, validation_split=0.2, callbacks=[stop_early], verbose=1)
 
         best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
+        if self.params['dafaults']:
+            best_hps.values = {'n_fc': self.params['n_fc'], 'n_hidden_phi':self.params['n_hidden_phi'] }
 
         model = tuner.hypermodel.build(best_hps)
 
