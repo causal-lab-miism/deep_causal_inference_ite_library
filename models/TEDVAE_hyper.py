@@ -36,13 +36,6 @@ class HyperTEDVAE(kt.HyperModel, CausalModel):
 
         return model
 
-    # def fit(self, hp, model, *args, **kwargs):
-    #     return model.fit(
-    #         *args,
-    #         batch_size=hp.Choice('batch_size', [32, 64, 128, 256, 512, 1024]),
-    #         **kwargs,
-    #     )
-
 
 class BernoulliNet(Model):
     def __init__(self, units, out_size, num_layers, params, name, **kwargs):
@@ -106,31 +99,31 @@ class TEDVAEModel(Model):
 
         self.kl_weight = 1.0/params['batch_size']
 
-        self.hp_fc_enc_x = hp.Int('hp_fc_enc_x', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi_enc_x = hp.Int('hp_hidden_phi_enc_x', min_value=16, max_value=512, step=16)
-        self.hp_fc_dec_x = hp.Int('hp_fc_dec_x', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi_dec_x = hp.Int('hp_hidden_phi_dec_x', min_value=16, max_value=512, step=16)
+        self.n_fc_enc_x = hp.Int('n_fc_enc_x', min_value=2, max_value=10, step=1)
+        self.hidden_phi_enc_x = hp.Int('hidden_phi_enc_x', min_value=16, max_value=512, step=16)
+        self.n_fc_dec_x = hp.Int('n_fc_dec_x', min_value=2, max_value=10, step=1)
+        self.hidden_phi_dec_x = hp.Int('hidden_phi_dec_x', min_value=16, max_value=512, step=16)
 
-        self.encoder_x = GaussianNet_KL(units=self.hp_hidden_phi_enc_x, out_size=params['latent_dim_z'],
-                                        num_layers=self.hp_fc_enc_x, params=params, name='x_encoder')
+        self.encoder_x = GaussianNet_KL(units=self.hidden_phi_enc_x, out_size=params['latent_dim_z'],
+                                        num_layers=self.n_fc_enc_x, params=params, name='x_encoder')
 
-        self.encoder_t = GaussianNet_KL(units=self.hp_hidden_phi_enc_x, out_size=params['latent_dim_zt'],
-                                        num_layers=self.hp_fc_enc_x, params=params, name='t_encoder')
+        self.encoder_t = GaussianNet_KL(units=self.hidden_phi_enc_x, out_size=params['latent_dim_zt'],
+                                        num_layers=self.n_fc_enc_x, params=params, name='t_encoder')
 
-        self.encoder_y = GaussianNet_KL(units=self.hp_hidden_phi_enc_x, out_size=params['latent_dim_zy'],
-                                        num_layers=self.hp_fc_enc_x, params=params, name='y_encoder')
+        self.encoder_y = GaussianNet_KL(units=self.hidden_phi_enc_x, out_size=params['latent_dim_zy'],
+                                        num_layers=self.n_fc_enc_x, params=params, name='y_encoder')
 
-        self.decoder_x_bin = BernoulliNet(units=self.hp_hidden_phi_dec_x, out_size=params['num_bin'],
-                                          num_layers=self.hp_fc_dec_x, params=params, name='decoder_x_bin')
+        self.decoder_x_bin = BernoulliNet(units=self.hidden_phi_dec_x, out_size=params['num_bin'],
+                                          num_layers=self.n_fc_dec_x, params=params, name='decoder_x_bin')
 
-        self.decoder_x_cont = GaussianNet(units=self.hp_hidden_phi_dec_x, out_size=params['num_cont'],
-                                          num_layers=self.hp_fc_dec_x, params=params, name='decoder_x_cont')
+        self.decoder_x_cont = GaussianNet(units=self.hidden_phi_dec_x, out_size=params['num_cont'],
+                                          num_layers=self.n_fc_dec_x, params=params, name='decoder_x_cont')
 
-        self.decoder_t = BernoulliNet(units=self.hp_hidden_phi_dec_x, out_size=1, num_layers=2, params=params,
+        self.decoder_t = BernoulliNet(units=self.hidden_phi_dec_x, out_size=1, num_layers=2, params=params,
                                       name='decoder_t')
-        self.decoder_y0 = GaussianNet(units=self.hp_hidden_phi_dec_x, out_size=1, num_layers=self.hp_fc_dec_x,
+        self.decoder_y0 = GaussianNet(units=self.hidden_phi_dec_x, out_size=1, num_layers=self.n_fc_dec_x,
                                       params=params, name='decoder_y0')
-        self.decoder_y1 = GaussianNet(units=self.hp_hidden_phi_dec_x, out_size=1, num_layers=self.hp_fc_dec_x,
+        self.decoder_y1 = GaussianNet(units=self.hidden_phi_dec_x, out_size=1, num_layers=self.n_fc_dec_x,
                                       params=params, name='decoder_y1')
 
         self.alpha_t = 50
@@ -259,7 +252,7 @@ class TEDVAE(CausalModel):
         super().__init__(params)
         self.params = params
 
-    def fit_model(self, x, y, t, seed):
+    def fit_model(self, x, y, t, count, seed):
         directory_name = 'params/' + self.params['dataset_name']
         setSeed(seed)
         t = tf.cast(t, dtype=tf.float32)
@@ -283,15 +276,26 @@ class TEDVAE(CausalModel):
         ytx = np.concatenate([y, t, x], 1)
         stop_early = [TerminateOnNaN(), EarlyStopping(monitor='val_loss', patience=5)]
         tuner.search(ytx, epochs=50, validation_split=0.2, batch_size=self.params['batch_size'],
-                     callbacks=[stop_early], verbose=0)
+                     callbacks=[stop_early], verbose=self.params['verbose'])
 
         best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
-
+        if self.params['defaults']:
+            best_hps.values = {'n_fc_enc_x': self.params['n_fc_enc_x'], 'hidden_phi_enc_x': self.params['hidden_phi_enc_x'],
+                               'n_fc_dec_x': self.params['n_fc_dec_x'], 'hidden_phi_dec_x': self.params['hidden_phi_dec_x'],
+                               'lr': self.params['lr']}
         model = tuner.hypermodel.build(best_hps)
+
 
         model.fit(ytx, epochs=self.params['epochs'], callbacks=callbacks('loss'),
                   batch_size=self.params['batch_size'], validation_split=0.0,
                   verbose=self.params['verbose'])
+        if count == 0:
+            print(f"""The hyperparameter search is complete. the optimal hyperparameters are
+                      layer is n_fc_enc_x={best_hps.get('n_fc_enc_x')} hidden_phi_enc_x = {best_hps.get('hidden_phi_enc_x')}
+                      n_fc_dec_x = {best_hps.get('n_fc_dec_x')} hidden_phi_dec_x = {best_hps.get('hidden_phi_dec_x')}
+                      lr = {best_hps.get('lr')}""")
+            # print(model.summary())
+
 
         return model
 
@@ -308,12 +312,14 @@ class TEDVAE(CausalModel):
     def train_and_evaluate(self, metric_list, **kwargs):
         data_train, data_test = self.load_data(**kwargs)
 
+        count = kwargs.get('count')
+
         self.folder_ind = kwargs.get('folder_ind')
 
         if self.params['binary']:
-            model = self.fit_model(data_train['x'], data_train['y'], data_train['t'], seed=0)
+            model = self.fit_model(data_train['x'], data_train['y'], data_train['t'], count=count, seed=0)
         else:
-            model = self.fit_model(data_train['x'], data_train['ys'], data_train['t'], seed=0)
+            model = self.fit_model(data_train['x'], data_train['ys'], data_train['t'], count=count, seed=0)
 
         concat_pred = self.evaluate(data_test['x'], model)
 

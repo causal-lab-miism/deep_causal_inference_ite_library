@@ -36,9 +36,9 @@ class SModel(Model):
     def __init__(self, params, hp, name='slearner', **kwargs):
         super(SModel, self).__init__(name=name, **kwargs)
         self.params = params
-        self.hp_fc = hp.Int('n_fc', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi = hp.Int('hidden_phi', min_value=16, max_value=512, step=16)
-        self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi,
+        self.n_fc = hp.Int('n_fc', min_value=2, max_value=10, step=1)
+        self.hidden_phi = hp.Int('hidden_phi', min_value=16, max_value=512, step=16)
+        self.fc = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi,
                                  final_activation=params['activation'], out_size=1,
                                  kernel_init=params['kernel_init'], kernel_reg=None, name='fc')
 
@@ -88,7 +88,7 @@ class SLearner(CausalModel):
         model = tuner.hypermodel.build(best_hps)
 
         # print(f"""The hyperparameter search is complete. the optimal hyperparameters are
-        #       layer is n_fc={best_hps.get('hp_fc')} - hidden_phi = {best_hps.get('hp_hidden_phi')}""")
+        #       layer is n_fc={best_hps.get('n_fc')} - hidden_phi = {best_hps.get('hidden_phi')}""")
 
         model.fit(x_t, y, epochs=self.params['epochs'], callbacks=callbacks('mse'),
                   batch_size=self.params['batch_size'], validation_split=0.0,

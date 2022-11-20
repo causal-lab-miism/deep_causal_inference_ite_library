@@ -92,21 +92,21 @@ class Generator(Model):
     def __init__(self, name, params, hp, **kwargs):
         super(Generator, self).__init__(name=name, **kwargs)
         if params['dataset_name'] == 'ihdp_a':
-            self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=5, step=1)
-            self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=4, max_value=48, step=4)
+            self.n_fc = hp.Int('n_fc_g', min_value=2, max_value=5, step=1)
+            self.hidden_phi = hp.Int('hidden_phi_g', min_value=4, max_value=48, step=4)
         else:
-            self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=10, step=1)
-            self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=16, max_value=512, step=16)
-        self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi, final_activation='elu',
-                                 out_size=self.hp_hidden_phi, kernel_init=params['kernel_init'], kernel_reg=None,
+            self.n_fc = hp.Int('n_fc_g', min_value=2, max_value=10, step=1)
+            self.hidden_phi = hp.Int('hidden_phi_g', min_value=16, max_value=512, step=16)
+        self.fc = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi, final_activation='elu',
+                                 out_size=self.hidden_phi, kernel_init=params['kernel_init'], kernel_reg=None,
                                  name=name)
 
-        self.pred_y0 = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi,
+        self.pred_y0 = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi,
                                       final_activation=params['activation'], out_size=1,
                                       kernel_init=params['kernel_init'],
                                       kernel_reg=regularizers.l2(params['reg_l2']), name=name+'pred_y0')
 
-        self.pred_y1 = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi,
+        self.pred_y1 = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi,
                                       final_activation=params['activation'], out_size=1,
                                       kernel_init=params['kernel_init'],
                                       kernel_reg=regularizers.l2(params['reg_l2']), name=name+'pred_y1')
@@ -130,12 +130,12 @@ class Discriminator(tf.keras.Model):
         super(Discriminator, self).__init__(name=name, **kwargs)
         self.bias_initializer = tf.keras.initializers.Zeros()
         if params['dataset_name'] == 'ihdp_a':
-            self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=5, step=1)
-            self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=4, max_value=48, step=4)
+            self.n_fc = hp.Int('n_fc_d', min_value=2, max_value=5, step=1)
+            self.hidden_phi = hp.Int('hidden_phi_d', min_value=4, max_value=48, step=4)
         else:
-            self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=10, step=1)
-            self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=16, max_value=512, step=16)
-        self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi, out_size=1,
+            self.n_fc = hp.Int('n_fc_d', min_value=2, max_value=10, step=1)
+            self.hidden_phi = hp.Int('hidden_phi_d', min_value=16, max_value=512, step=16)
+        self.fc = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi, out_size=1,
                                  final_activation='linear', name='fcd', kernel_reg=None,
                                  kernel_init=params['kernel_init'],
                                  activation='relu', bias_initializer=self.bias_initializer)
@@ -161,21 +161,21 @@ class InferenceNet(tf.keras.Model):
         super(InferenceNet, self).__init__(name=name, **kwargs)
         self.params = params
         if params['dataset_name'] == 'ihdp_a':
-            self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=5, step=1)
-            self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=4, max_value=48, step=4)
+            self.n_fc = hp.Int('n_fc_i', min_value=2, max_value=5, step=1)
+            self.hidden_phi = hp.Int('hidden_phi_i', min_value=4, max_value=48, step=4)
         else:
-            self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=10, step=1)
-            self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=16, max_value=512, step=16)
-        self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi, final_activation='elu',
-                                 out_size=self.hp_hidden_phi, kernel_init=params['kernel_init'], kernel_reg=None,
+            self.n_fc = hp.Int('n_fc_i', min_value=2, max_value=10, step=1)
+            self.hidden_phi = hp.Int('hidden_phi_i', min_value=16, max_value=512, step=16)
+        self.fc = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi, final_activation='elu',
+                                 out_size=self.hidden_phi, kernel_init=params['kernel_init'], kernel_reg=None,
                                  name=name)
 
-        self.pred_y0 = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi,
+        self.pred_y0 = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi,
                                       final_activation=params['activation'], out_size=1,
                                       kernel_init=params['kernel_init'],
                                       kernel_reg=regularizers.l2(params['reg_l2']), name=name + 'pred_y0')
 
-        self.pred_y1 = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi,
+        self.pred_y1 = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi,
                                       final_activation=params['activation'], out_size=1,
                                       kernel_init=params['kernel_init'],
                                       kernel_reg=regularizers.l2(params['reg_l2']), name=name + 'pred_y1')
@@ -342,7 +342,7 @@ class GANITE(CausalModel):
         self.alpha = 2
         self.binary = params['binary']
 
-    def fit_model(self, x, y, t, seed):
+    def fit_model(self, x, y, t, seed, count):
         directory_name = 'params/' + self.params['dataset_name'] + f'/{self.params["model_name"]}'
         setSeed(seed)
         ytx = np.concatenate([y, t, x], 1)
@@ -367,11 +367,16 @@ class GANITE(CausalModel):
 
         best_hps_g = tuner_g.get_best_hyperparameters(num_trials=1)[0]
 
+        if self.params['defaults']:
+            best_hps_g.values = {'lr': self.params['lr'], 'hidden_phi_g': self.params['hidden_phi'],
+                                 'batch_size': self.params['batch_size_g'], 'n_fc_g': self.params['n_fc'],
+                                 'n_fc_d': self.params['n_fc'], 'hidden_phi_d': self.params['hidden_phi']}
         gan = tuner_g.hypermodel.build(best_hps_g)
 
-        # print(f"""The hyperparameter search generator is complete.
-        #           layer is n_fc={best_hps_g.get('hp_fc')} - hidden_phi = {best_hps_g.get('hp_hidden_phi')} -
-        #           learning rate={best_hps_g.get('lr')} - batch size = {best_hps_g.get('batch_size')}""")
+        if count == 0:
+            print(f"""The hyperparameter search generator is complete.
+                      layer is n_fc={best_hps_g.get('n_fc_g')} - hidden_phi = {best_hps_g.get('hidden_phi_g')} -
+                      learning rate={best_hps_g.get('lr')} - batch size = {best_hps_g.get('batch_size')}""")
 
         gan.fit(ytx, epochs=self.params['epochs_g'], callbacks=callbacks('val_d_loss'),
                 verbose=self.params['verbose'], validation_split=0,
@@ -393,11 +398,13 @@ class GANITE(CausalModel):
         tuner_i.search(ytx, ytx, epochs=50, validation_split=0.2, callbacks=[stop_early], verbose=1)
 
         best_hps_i = tuner_i.get_best_hyperparameters(num_trials=1)[0]
-
+        if self.params['defaults']:
+            best_hps_i.values = {'lr': self.params['lr'], 'hidden_phi_i': self.params['hidden_phi'],
+                                 'batch_size': self.params['batch_size_i'], 'n_fc_i': self.params['n_fc']}
         inference_learner = tuner_i.hypermodel.build(best_hps_i)
 
         # print(f"""The hyperparameter search inference is complete.
-        #           layer is n_fc={best_hps_i.get('hp_fc')} - hidden_phi = {best_hps_i.get('hp_hidden_phi')} -
+        #           layer is n_fc={best_hps_i.get('n_fc')} - hidden_phi = {best_hps_i.get('hidden_phi')} -
         #           learning rate={best_hps_i.get('lr')} - batch size = {best_hps_i.get('batch_size')}""")
 
         inference_learner.fit(ytx, ytx, epochs=self.params['epochs_i'], callbacks=callbacks('loss'),
@@ -416,13 +423,13 @@ class GANITE(CausalModel):
 
     def train_and_evaluate(self, metric_list, **kwargs):
         data_train, data_test = self.load_data(**kwargs)
-
+        count = kwargs.get('count')
         self.folder_ind = kwargs.get('folder_ind')
 
         if self.params['binary']:
-            model = self.fit_model(data_train['x'], data_train['y'], data_train['t'], seed=0)
+            model = self.fit_model(data_train['x'], data_train['y'], data_train['t'], count=count, seed=0)
         else:
-            model = self.fit_model(data_train['x'], data_train['ys'], data_train['t'], seed=0)
+            model = self.fit_model(data_train['x'], data_train['ys'], data_train['t'], count=count, seed=0)
 
         concat_pred = self.evaluate(data_test, model)
 

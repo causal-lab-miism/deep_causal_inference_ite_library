@@ -51,9 +51,9 @@ class GModel(Model):
     def __init__(self, params, hp, name='g_model', **kwargs):
         super(GModel, self).__init__(name=name, **kwargs)
         self.params = params
-        self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=5, step=1)
-        self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=16, max_value=64, step=8)
-        self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi,
+        self.n_fc = hp.Int('n_fc', min_value=2, max_value=5, step=1)
+        self.hidden_phi = hp.Int('hidden_phi', min_value=16, max_value=64, step=8)
+        self.fc = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi,
                                  final_activation='sigmoid', out_size=1, activation='elu',
                                  kernel_init=params['kernel_init'],
                                  kernel_reg=regularizers.l2(params['reg_l2']), name='fc')
@@ -67,9 +67,9 @@ class EModel(Model):
     def __init__(self, params, hp, name='e_model', **kwargs):
         super(EModel, self).__init__(name=name, **kwargs)
         self.params = params
-        self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=8, step=1)
-        self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=16, max_value=256, step=16)
-        self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi,
+        self.n_fc = hp.Int('n_fc', min_value=2, max_value=8, step=1)
+        self.hidden_phi = hp.Int('hidden_phi', min_value=16, max_value=256, step=16)
+        self.fc = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi,
                                  final_activation=params['activation'], out_size=1, activation='elu',
                                  kernel_init=params['kernel_init'],
                                  kernel_reg=regularizers.l2(params['reg_l2']), name='fc')
@@ -121,7 +121,7 @@ class XLearner(CausalModel):
         best_hps_mu0 = tuner_mu0.get_best_hyperparameters(num_trials=1)[0]
 
         print(f"""The hyperparameter search is complete. the optimal hyperparameters are
-              number of layers ={best_hps_mu0.get('hp_fc')} - hidden_phi = {best_hps_mu0.get('hp_hidden_phi')}""")
+              number of layers ={best_hps_mu0.get('n_fc')} - hidden_phi = {best_hps_mu0.get('hidden_phi')}""")
 
         tuner_mu1 = kt.RandomSearch(
             HyperELearner(params=self.params),
@@ -137,7 +137,7 @@ class XLearner(CausalModel):
         best_hps_mu1 = tuner_mu1.get_best_hyperparameters(num_trials=1)[0]
 
         print(f"""The hyperparameter search is complete. the optimal hyperparameters are
-              number of layers ={best_hps_mu1.get('hp_fc')} - hidden_phi = {best_hps_mu1.get('hp_hidden_phi')}""")
+              number of layers ={best_hps_mu1.get('n_fc')} - hidden_phi = {best_hps_mu1.get('hidden_phi')}""")
 
         model_mu0 = tuner_mu0.hypermodel.build(best_hps_mu0)
         model_mu1 = tuner_mu0.hypermodel.build(best_hps_mu1)
@@ -176,7 +176,7 @@ class XLearner(CausalModel):
         best_hps_d0 = tuner_d0.get_best_hyperparameters(num_trials=1)[0]
 
         print(f"""The hyperparameter search is complete. the optimal hyperparameters are
-                      number of layers ={best_hps_d0.get('hp_fc')} - hidden_phi = {best_hps_d0.get('hp_hidden_phi')}""")
+                      number of layers ={best_hps_d0.get('n_fc')} - hidden_phi = {best_hps_d0.get('hidden_phi')}""")
 
         tuner_d1 = kt.RandomSearch(
             HyperELearner(params=self.params),
@@ -192,7 +192,7 @@ class XLearner(CausalModel):
         best_hps_d1 = tuner_d1.get_best_hyperparameters(num_trials=1)[0]
 
         print(f"""The hyperparameter search is complete. the optimal hyperparameters are
-                      number of layers ={best_hps_d1.get('hp_fc')} - hidden_phi = {best_hps_d1.get('hp_hidden_phi')}""")
+                      number of layers ={best_hps_d1.get('n_fc')} - hidden_phi = {best_hps_d1.get('hidden_phi')}""")
 
         model_du0 = tuner_d0.hypermodel.build(best_hps_d0)
         model_du1 = tuner_d1.hypermodel.build(best_hps_d1)
@@ -221,7 +221,7 @@ class XLearner(CausalModel):
         best_hps_g = tuner_g.get_best_hyperparameters(num_trials=1)[0]
 
         print(f"""The hyperparameter search is complete. the optimal hyperparameters are
-              number of layers={best_hps_g.get('hp_fc')} - hidden_phi = {best_hps_g.get('hp_hidden_phi')}""")
+              number of layers={best_hps_g.get('n_fc')} - hidden_phi = {best_hps_g.get('hidden_phi')}""")
 
         model_g = tuner_g.hypermodel.build(best_hps_g)
 

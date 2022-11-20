@@ -33,9 +33,9 @@ class TModel(Model):
     def __init__(self, params, hp, name='tlearner', **kwargs):
         super(TModel, self).__init__(name=name, **kwargs)
         self.params = params
-        self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=16, max_value=512, step=16)
-        self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_fc,
+        self.n_fc = hp.Int('n_fc', min_value=2, max_value=10, step=1)
+        self.hidden_phi = hp.Int('hidden_phi', min_value=16, max_value=512, step=16)
+        self.fc = FullyConnected(n_fc=self.n_fc, hidden_phi=self.n_fc,
                                  final_activation=params['activation'], out_size=1,
                                  kernel_init=params['kernel_init'],
                                  kernel_reg=regularizers.l2(params['reg_l2']), name='fc')
@@ -107,11 +107,11 @@ class TLearner(CausalModel):
 
         # if seed == 0:
         #     print(f"""The hyperparameter search is complete. the optimal hyperparameters are
-        #           layer0 is hp_fc_0={best_hps_0.get('hp_fc')} - hp_hidden_phi_0 = {best_hps_0.get('hp_hidden_phi')} -
+        #           layer0 is hp_fc_0={best_hps_0.get('n_fc')} - hp_hidden_phi_0 = {best_hps_0.get('hidden_phi')} -
         #           learning rate={best_hps_0.get('lr')} - batch size = {best_hps_0.get('batch_size')} """)
         #
         #     print(f"""The hyperparameter search is complete. the optimal hyperparameters are
-        #           layer1 is hp_fc_1={best_hps_1.get('hp_fc')} - hp_hidden_phi_1 = {best_hps_1.get('hp_hidden_phi')} -
+        #           layer1 is hp_fc_1={best_hps_1.get('n_fc')} - hp_hidden_phi_1 = {best_hps_1.get('hidden_phi')} -
         #           learning rate={best_hps_1.get('lr')} - batch size = {best_hps_1.get('batch_size')} """)
 
         model0.fit(x0, y0, epochs=self.params['epochs'], callbacks=callbacks('loss'),

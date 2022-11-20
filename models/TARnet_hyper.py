@@ -33,21 +33,21 @@ class TarnetModel(Model):
     def __init__(self, name, params, hp, **kwargs):
         super(TarnetModel, self).__init__(name=name, **kwargs)
         self.params = params
-        self.hp_n_fc = hp.Int('n_fc', min_value=2, max_value=10, step=1)
-        self.hp_n_hidden_phi = hp.Int('hidden_phi', min_value=16, max_value=512, step=16)
-        self.fc = FullyConnected(n_fc=self.hp_n_fc, hidden_phi=self.hp_n_hidden_phi, final_activation='elu',
-                                 out_size=self.hp_n_hidden_phi, kernel_init=params['kernel_init'], kernel_reg=None,
+        self.n_fc = hp.Int('n_fc', min_value=2, max_value=10, step=1)
+        self.hidden_phi = hp.Int('hidden_phi', min_value=16, max_value=512, step=16)
+        self.fc = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi, final_activation='elu',
+                                 out_size=self.hidden_phi, kernel_init=params['kernel_init'], kernel_reg=None,
                                  name='fc')
-        self.hp_n_hidden_0 = hp.Int('n_fc_y0', min_value=2, max_value=10, step=1)
-        self.hp_hidden_y0 = hp.Int('hidden_y0', min_value=16, max_value=512, step=16)
-        self.pred_y0 = FullyConnected(n_fc=self.hp_n_hidden_0, hidden_phi=self.hp_hidden_y0,
+        self.n_fc_y0 = hp.Int('n_fc_y0', min_value=2, max_value=10, step=1)
+        self.hidden_y0 = hp.Int('hidden_y0', min_value=16, max_value=512, step=16)
+        self.pred_y0 = FullyConnected(n_fc=self.n_fc_y0, hidden_phi=self.hidden_y0,
                                       final_activation=params['activation'], out_size=1,
                                       kernel_init=params['kernel_init'],
                                       kernel_reg=regularizers.l2(params['reg_l2']), name='y0')
 
-        self.hp_n_hidden_1 = hp.Int('n_fc_y1', min_value=2, max_value=10, step=1)
-        self.hp_hidden_y1 = hp.Int('hidden_y1', min_value=16, max_value=512, step=16)
-        self.pred_y1 = FullyConnected(n_fc=self.hp_n_hidden_1, hidden_phi=self.hp_hidden_y1,
+        self.n_fc_y1 = hp.Int('n_fc_y1', min_value=2, max_value=10, step=1)
+        self.hidden_y1 = hp.Int('hidden_y1', min_value=16, max_value=512, step=16)
+        self.pred_y1 = FullyConnected(n_fc=self.n_fc_y1, hidden_phi=self.hidden_y1,
                                       final_activation=params['activation'], out_size=1,
                                       kernel_init=params['kernel_init'],
                                       kernel_reg=regularizers.l2(params['reg_l2']), name='y1')

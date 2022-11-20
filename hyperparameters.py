@@ -7,7 +7,7 @@ def find_params(model_name, dataset_name):
                               'batch_size': 64, 'reg_l2': .01, 'activation': 'linear',
                               'epochs': 300, 'binary': False, 'n_fc': 9, 'verbose': 0, 'val_split': 0.0,
                               'kernel_init': 'RandomNormal', 'max_trials': 10, 'defaults': True,
-                              'hp_fc': 3, 'hp_hidden_phi': 200}
+                              'n_fc': 3, 'hidden_phi': 200}
 
     params_SLearner_IHDP_b = {'dataset_name': "ihdp_b", 'num': 100, 'lr': 1e-3, 'patience': 40,
                               'batch_size': 64, 'reg_l2': .01, 'activation': 'linear',
@@ -133,36 +133,46 @@ def find_params(model_name, dataset_name):
 
     params_CEVAE_IHDP_a = {'dataset_name': "ihdp_a", 'num': 100, 'num_bin': 19, 'num_cont': 6, 'lr': 1e-3,
                            'patience': 40, 'batch_size': 64, 'reg_l2': .01, 'activation': 'linear',
-                           'latent_dim': 20, 'epochs': 300, 'binary': False,'val_split': 0.0, 'verbose': 0,
-                           'kernel_init': 'RandomNormal'}
+                           'latent_dim': 20, 'epochs': 300, 'binary': False, 'val_split': 0.0, 'verbose': 0,
+                           'kernel_init': 'RandomNormal', 'n_fc_latent_y': 3, 'hidden_phi_latent_y': 200,
+                           'n_fc_latent_x': 3, 'hidden_phi_latent_x': 200, 'hidden_phi_dec_t': 200,
+                           'n_fc_dec_t': 3, 'defaults': True}
 
     params_CEVAE_IHDP_b = {'dataset_name': "ihdp_b", 'num': 100, 'num_bin': 19, 'num_cont': 6, 'lr': 1e-3,
                            'patience': 40, 'batch_size': 64, 'reg_l2': .01, 'activation': 'linear',
                            'latent_dim': 20, 'epochs': 300, 'binary': False, 'val_split': 0.0, 'verbose': 0,
-                           'kernel_init': 'GlorotNormal'}
+                           'kernel_init': 'GlorotNormal', 'n_fc_latent_y': 3, 'hidden_phi_latent_y': 200,
+                           'n_fc_latent_x': 3, 'hidden_phi_latent_x': 200, 'hidden_phi_dec_t': 200,
+                           'n_fc_dec_t': 3, 'defaults': False}
 
     params_CEVAE_ACIC = {'dataset_name': "acic", 'num': 77,  'num_bin': 55, 'num_cont': 0, 'lr': 1e-3, 'patience': 40,
                          'batch_size': 400, 'reg_l2': .01, 'activation': 'linear', 'latent_dim': 20,
                          'epochs': 1000, 'binary': False, 'val_split': 0.0, 'verbose': 0,
-                         'kernel_init': 'RandomNormal'}
+                         'kernel_init': 'RandomNormal', 'n_fc_latent_y': 3, 'hidden_phi_latent_y': 240,
+                           'n_fc_latent_x': 7, 'hidden_phi_latent_x': 32, 'hidden_phi_dec_t': 56, 'n_fc_dec_t': 3,
+                         'defaults': True}
 
     params_CEVAE_JOBS = {'dataset_name': "jobs", 'num': 100, 'lr': 1e-3, 'num_bin': 0, 'num_cont': 17, 'patience': 40,
                          'batch_size': 1024, 'reg_l2': .01, 'activation': 'sigmoid', 'latent_dim': 20,
                          'epochs': 50, 'binary': True, 'val_split': 0.0, 'verbose': 0,
-                         'kernel_init': 'GlorotNormal'}
+                         'kernel_init': 'GlorotNormal', 'n_fc_latent_y': 3, 'hidden_phi_latent_y': 240,
+                           'n_fc_latent_x': 7, 'hidden_phi_latent_x': 32, 'hidden_phi_dec_t': 56,'n_fc_dec_t': 3,
+                         'defaults': True}
 
     """TEDVAE"""
 
     params_TEDVAE_IHDP_a = {'dataset_name': "ihdp_a", 'num': 100, 'lr': 1e-4, 'patience': 40, 'batch_size': 1024,
-                            'reg_l2': .01, 'activation': 'linear', 'latent_dim_z': 15,
-                            'num_bin': 19,'num_cont': 6, 'latent_dim_zt': 15,
-                            'latent_dim_zy': 5, 'epochs': 400, 'binary': False,
-                            'verbose': 0, 'kernel_init': 'RandomNormal'}
+                            'reg_l2': .01, 'activation': 'linear', 'latent_dim_z': 20,
+                            'num_bin': 19, 'num_cont': 6, 'latent_dim_zt': 10,
+                            'latent_dim_zy': 10, 'epochs': 400, 'binary': False, 'defaults': True,
+                            'verbose': 0, 'kernel_init': 'RandomNormal',
+                            'n_fc_enc_x': 4, 'hidden_phi_enc_x': 500, 'n_fc_dec_x': 4, 'hidden_phi_dec_x': 500}
 
     params_TEDVAE_IHDP_b = {'dataset_name': "ihdp_b", 'num': 100, 'lr': 1e-3, 'patience': 40, 'batch_size': 1024,
                             'reg_l2': .01, 'activation': 'linear', 'latent_dim_z': 15, 'num_bin': 19,
                             'num_cont': 6, 'latent_dim_zt': 15, 'latent_dim_zy': 5, 'epochs': 400, 'binary': False,
-                            'verbose': 0, 'val_split': 0.0, 'kernel_init': 'GlorotNormal'}
+                            'verbose': 0, 'val_split': 0.0, 'kernel_init': 'GlorotNormal',
+                            'n_fc_enc_x': 4, 'hidden_phi_enc_x': 500, 'n_fc_dec_x': 4, 'hidden_phi_dec_x': 500}
 
     params_TEDVAE_ACIC = {'dataset_name': "acic", 'num': 77, 'lr': 1e-3, 'patience': 25, 'batch_size': 32,
                           'reg_l2': .01, 'activation': 'linear', 'latent_dim_z': 15, 'num_bin': 55,
@@ -200,10 +210,10 @@ def find_params(model_name, dataset_name):
 
     """GANITE"""
 
-    params_GANITE_IHDP_a = {'dataset_name': "ihdp_a", 'num': 100, 'lr': 1e-3, 'patience': 40, 'defaults': True,
-                            'batch_size_g': 64, 'batch_size_i': 128, 'reg_l2': .01, 'activation': 'linear',
+    params_GANITE_IHDP_a = {'dataset_name': "ihdp_a", 'num': 100, 'lr': 1e-3, 'patience': 40, 'defaults': False,
+                            'batch_size_g': 64, 'batch_size_i': 64, 'reg_l2': .01, 'activation': 'linear',
                             'binary': False, 'epochs_g': 1000, 'verbose': 0, 'epochs_i': 500, 'val_split': 0.0,
-                            'kernel_init': 'RandomNormal'}
+                            'kernel_init': 'RandomNormal',  'hidden_phi': 64, 'n_fc': 5}
 
     params_GANITE_IHDP_b = {'dataset_name': "ihdp_b", 'num': 100, 'lr': 1e-3, 'patience': 40, 'batch_size_g': 64,
                             'batch_size_i': 256, 'reg_l2': .01, 'activation': 'linear', 'binary': False,

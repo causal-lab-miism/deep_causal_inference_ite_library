@@ -90,9 +90,9 @@ class MuModel(Model):
     def __init__(self, params, hp, name='mu_model', **kwargs):
         super(MuModel, self).__init__(name=name, **kwargs)
         self.params = params
-        self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=16, max_value=512, step=16)
-        self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi,
+        self.n_fc = hp.Int('n_fc', min_value=2, max_value=10, step=1)
+        self.hidden_phi = hp.Int('hidden_phi', min_value=16, max_value=512, step=16)
+        self.fc = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi,
                                  final_activation=params['activation'], out_size=1, activation='elu',
                                  kernel_init=params['kernel_init'],
                                  kernel_reg=regularizers.l2(params['reg_l2']), name='fc')
@@ -105,9 +105,9 @@ class GModel(Model):
     def __init__(self, params, hp, name='g_model', **kwargs):
         super(GModel, self).__init__(name=name, **kwargs)
         self.params = params
-        self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=8, max_value=24, step=2)
-        self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi,
+        self.n_fc = hp.Int('n_fc', min_value=2, max_value=10, step=1)
+        self.hidden_phi = hp.Int('hidden_phi', min_value=8, max_value=24, step=2)
+        self.fc = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi,
                                  final_activation=params['activation'], out_size=1, activation='elu',
                                  kernel_init=params['kernel_init'],
                                  kernel_reg=regularizers.l2(params['reg_l2']), name='fc')
@@ -121,9 +121,9 @@ class TauModel(Model):
     def __init__(self, params, hp, name='tau_model', **kwargs):
         super(TauModel, self).__init__(name=name, **kwargs)
         self.params = params
-        self.hp_fc = hp.Int('hp_fc', min_value=2, max_value=10, step=1)
-        self.hp_hidden_phi = hp.Int('hp_hidden_phi', min_value=16, max_value=512, step=16)
-        self.fc = FullyConnected(n_fc=self.hp_fc, hidden_phi=self.hp_hidden_phi,
+        self.n_fc = hp.Int('n_fc', min_value=2, max_value=10, step=1)
+        self.hidden_phi = hp.Int('hidden_phi', min_value=16, max_value=512, step=16)
+        self.fc = FullyConnected(n_fc=self.n_fc, hidden_phi=self.hidden_phi,
                                  final_activation=self.params['activation'], out_size=1,
                                  kernel_init=params['kernel_init'], kernel_reg=regularizers.l2(self.params['reg_l2']),
                                  name='tau_model')
@@ -195,7 +195,7 @@ class RLearner(CausalModel):
         model_mu = tuner_mu.hypermodel.build(best_hps_mu)
 
         print(f"""The hyperparameter search for Model_Mu is complete. the optimal hyperparameters are
-              layer is n_fc={best_hps_mu.get('hp_fc')} - hidden_phi = {best_hps_mu.get('hp_hidden_phi')} -
+              layer is n_fc={best_hps_mu.get('n_fc')} - hidden_phi = {best_hps_mu.get('hidden_phi')} -
               batch size = {best_hps_mu.get('batch_size')}""")
 
         model_mu.fit(x, y, epochs=self.params['epochs'], callbacks=callbacks('loss'),
@@ -222,7 +222,7 @@ class RLearner(CausalModel):
         model_g = tuner_mu.hypermodel.build(best_hps_g)
 
         print(f"""The hyperparameter search for Model_G is complete. the optimal hyperparameters are
-              layer is n_fc={best_hps_g.get('hp_fc')} - hidden_phi = {best_hps_g.get('hp_hidden_phi')} -
+              layer is n_fc={best_hps_g.get('n_fc')} - hidden_phi = {best_hps_g.get('hidden_phi')} -
               - batch size = {best_hps_g.get('batch_size')}""")
 
         model_g.fit(x, t, epochs=self.params['epochs'], callbacks=callbacks('loss'),
@@ -251,7 +251,7 @@ class RLearner(CausalModel):
         model_r = tuner_r.hypermodel.build(best_hps_r)
 
         print(f"""The hyperparameter search for Model_R is complete. the optimal hyperparameters are
-              layer is n_fc={best_hps_r.get('hp_fc')} - hidden_phi = {best_hps_r.get('hp_hidden_phi')} -
+              layer is n_fc={best_hps_r.get('n_fc')} - hidden_phi = {best_hps_r.get('hidden_phi')} -
               - batch size = {best_hps_r.get('batch_size')}""")
 
         model_r.fit(x, yt, epochs=self.params['epochs'], callbacks=callbacks('loss'),

@@ -63,7 +63,7 @@ class BernoulliNet(Model):
 class GaussianNet(Model):
     def __init__(self, units, out_size, num_layers, params, name, **kwargs):
         super(GaussianNet, self).__init__(name=name, **kwargs)
-        self.fully_connected = FullyConnected(n_fc=num_layers, hidden_phi=units, out_size=2*out_size,
+        self.fully_connected = FullyConnected(n_fc=num_layers, hidden_phi=units, out_size=2 * out_size,
                                               final_activation=None, kernel_init=params['kernel_init'],
                                               kernel_reg=regularizers.l2(params['reg_l2']), name=name)
         self.gaus_dist = tfp.layers.DistributionLambda(lambda t: tfp.distributions.MultivariateNormalDiag(
@@ -100,8 +100,8 @@ class BernoulliNet_KL(Model):
 
 class GaussianNet_KL(Model):
     def __init__(self, units, out_size, num_layers, params, name, kl_weight=1.0, **kwargs):
-        super(GaussianNet_KL, self).__init__(name=name,  **kwargs)
-        self.fully_connected = FullyConnected(n_fc=num_layers, hidden_phi=units, out_size=2*out_size,
+        super(GaussianNet_KL, self).__init__(name=name, **kwargs)
+        self.fully_connected = FullyConnected(n_fc=num_layers, hidden_phi=units, out_size=2 * out_size,
                                               final_activation=None, kernel_init=None,
                                               kernel_reg=regularizers.l2(params['reg_l2']), name=name)
         self.prior = tfd.Independent(tfd.MultivariateNormalDiag(loc=tf.zeros(out_size), scale_diag=tf.ones(out_size)))
@@ -110,7 +110,7 @@ class GaussianNet_KL(Model):
             scale_diag=tf.clip_by_value(1e-3 + tf.math.softplus(t[..., out_size:]), clip_value_min=0,
                                         clip_value_max=1e2)),
                                                        activity_regularizer=tfpl.KLDivergenceRegularizer(
-                                                           self.prior, weight=kl_weight),)
+                                                           self.prior, weight=kl_weight), )
 
     def call(self, input):
         z = self.fully_connected(input)
@@ -122,57 +122,62 @@ class CEVAEModel(Model):
     def __init__(self, name, params, hp, **kwargs):
         super(CEVAEModel, self).__init__(name=name, **kwargs)
         self.params = params
-        self.kl_weight = 1.0/params['batch_size']
+        self.kl_weight = 1.0 / params['batch_size']
 
-        self.hp_fc_latent_y = hp.Int('hp_fc_latent_y', min_value=2, max_value=5, step=1)
-        self.hp_hidden_phi_latent_y = hp.Int('hp_hidden_phi_latent_y', min_value=16, max_value=512, step=16)
+        self.n_fc_latent_y = hp.Int('n_fc_latent_y', min_value=2, max_value=5, step=1, default=self.params['n_fc_latent_y'])
+        self.hidden_phi_latent_y = hp.Int('hidden_phi_latent_y', min_value=16, max_value=512, step=16,
+                                          default=self.params['hidden_phi_latent_y'])
 
-        self.hp_fc_x_latent = hp.Int('hp_fc_x_latent', min_value=2, max_value=8, step=1)
-        self.hp_hidden_x_latent = hp.Int('hp_hidden_x_latent', min_value=16, max_value=64, step=8)
+        self.n_fc_latent_x = hp.Int('n_fc_latent_x', min_value=2, max_value=8, step=1,
+                                    default=self.params['n_fc_latent_x'])
+        self.hidden_phi_latent_x = hp.Int('hidden_phi_latent_x', min_value=16, max_value=64, step=8,
+                                          default=self.params['hidden_phi_latent_x'])
 
-        self.hp_hidden_phi_dec_t = hp.Int('hp_hidden_phi_dec_t', min_value=16, max_value=64, step=8)
+        self.n_fc_dec_t = hp.Int('n_fc_dec_t', min_value=2, max_value=5, step=1, default=self.params['n_fc_dec_t'])
+        self.hidden_phi_dec_t = hp.Int('hidden_phi_dec_t', min_value=16, max_value=64, step=8,
+                                       default=self.params['hidden_phi_dec_t'])
 
         self.t_distribution = BernoulliNet(units=self.params['latent_dim'], out_size=1, num_layers=1, params=params,
                                            name='t_distribution')
 
-        self.y_latent_space = FullyConnected(n_fc=self.hp_fc_latent_y, hidden_phi=self.hp_hidden_phi_latent_y,
+        self.y_latent_space = FullyConnected(n_fc=self.n_fc_latent_y, hidden_phi=self.hidden_phi_latent_y,
                                              out_size=1, final_activation=None, kernel_init=None,
                                              kernel_reg=regularizers.l2(params['reg_l2']), name='y_latent_space')
 
-        self.y0_distribution = GaussianNet_KL(units=self.hp_hidden_phi_latent_y, out_size=1, num_layers=2,
+        self.y0_distribution = GaussianNet_KL(units=self.hidden_phi_latent_y, out_size=1, num_layers=2,
                                               params=params, name='y0_distribution', kl_weight=self.kl_weight)
-        self.y1_distribution = GaussianNet_KL(units=self.hp_hidden_phi_latent_y, out_size=1, num_layers=2,
+        self.y1_distribution = GaussianNet_KL(units=self.hidden_phi_latent_y, out_size=1, num_layers=2,
                                               params=params, name='y1_distribution', kl_weight=self.kl_weight)
 
-        self.z_latent_space = FullyConnected(n_fc=self.hp_fc_latent_y, hidden_phi=self.hp_hidden_phi_latent_y,
+        self.z_latent_space = FullyConnected(n_fc=self.n_fc_latent_y, hidden_phi=self.hidden_phi_latent_y,
                                              out_size=1, final_activation=None, kernel_init=params['kernel_init'],
                                              kernel_reg=regularizers.l2(params['reg_l2']), name='z_latent_space')
 
-        self.encoder_y0 = GaussianNet_KL(units=self.hp_hidden_phi_latent_y, out_size=params['latent_dim'], num_layers=2,
+        self.encoder_y0 = GaussianNet_KL(units=self.hidden_phi_latent_y, out_size=params['latent_dim'], num_layers=2,
                                          params=params, name='encoder_y0')
-        self.encoder_y1 = GaussianNet_KL(units=self.hp_hidden_phi_latent_y, out_size=params['latent_dim'], num_layers=2,
+        self.encoder_y1 = GaussianNet_KL(units=self.hidden_phi_latent_y, out_size=params['latent_dim'], num_layers=2,
                                          params=params, name='encoder_y1')
 
-        self.x_latent_space = FullyConnected(n_fc=self.hp_fc_x_latent, hidden_phi=self.hp_hidden_x_latent,
+        self.x_latent_space = FullyConnected(n_fc=self.n_fc_latent_x, hidden_phi=self.hidden_phi_latent_x,
                                              out_size=1, final_activation=None, kernel_init=params['kernel_init'],
                                              kernel_reg=regularizers.l2(params['reg_l2']), name='x_latent_space')
 
-        self.decoder_x_bin = BernoulliNet(units=self.hp_hidden_x_latent, out_size=params['num_bin'], num_layers=2,
+        self.decoder_x_bin = BernoulliNet(units=self.hidden_phi_latent_x, out_size=params['num_bin'], num_layers=2,
                                           params=params, name='x_bin_decoder')
 
-        self.decoder_x_cont = GaussianNet(units=self.hp_hidden_x_latent, out_size=params['num_cont'], num_layers=2,
+        self.decoder_x_cont = GaussianNet(units=self.hidden_phi_latent_x, out_size=params['num_cont'], num_layers=2,
                                           params=params, name='x_cont_decoder')
 
-        self.decoder_t = BernoulliNet(units=self.hp_hidden_phi_dec_t, out_size=1, num_layers=2, params=params,
+        self.decoder_t = BernoulliNet(units=self.hidden_phi_dec_t, out_size=1, num_layers=self.n_fc_dec_t, params=params,
                                       name='t_distribution')
 
         """Note that the original paper only samples mean and sets variance = 1 for y0|z and y1|z"""
 
-        self.decoder_y0 = GaussianNet(units=self.hp_hidden_phi_latent_y, out_size=1,
-                                      num_layers=self.hp_fc_latent_y, params=params, name='decoder_y0')
+        self.decoder_y0 = GaussianNet(units=self.hidden_phi_latent_y, out_size=1,
+                                      num_layers=self.n_fc_latent_y, params=params, name='decoder_y0')
 
-        self.decoder_y1 = GaussianNet(units=self.hp_hidden_phi_latent_y, out_size=1,
-                                      num_layers=self.hp_fc_latent_y, params=params, name='decoder_y1')
+        self.decoder_y1 = GaussianNet(units=self.hidden_phi_latent_y, out_size=1,
+                                      num_layers=self.n_fc_latent_y, params=params, name='decoder_y1')
 
         self.alpha_t = 50
         self.alpha_y = 100
@@ -199,7 +204,7 @@ class CEVAEModel(Model):
         y1_dist = self.y1_distribution(phi_y)
 
         t_x = tf.cast(t_x, tf.float32)
-        loc_y = (1-t_x)*y0_dist.mean() + t_x*y1_dist.mean()
+        loc_y = (1 - t_x) * y0_dist.mean() + t_x * y1_dist.mean()
         y0_var = tf.expand_dims(tf.math.reduce_variance(y0_dist.sample(), axis=1), axis=1)
         y1_var = tf.expand_dims(tf.math.reduce_variance(y1_dist.sample(), axis=1), axis=1)
         scale_y = (1 - t_x) * y0_var + t_x * y1_var
@@ -211,8 +216,8 @@ class CEVAEModel(Model):
         z0_dist = self.encoder_y0(x_yt)
         z1_dist = self.encoder_y1(x_yt)
 
-        loc_z = (1-t_x)*z0_dist.mean() + t_x*z1_dist.mean()
-        scale_z = (1-t_x)*z0_dist.variance() + t_x*z1_dist.variance()
+        loc_z = (1 - t_x) * z0_dist.mean() + t_x * z1_dist.mean()
+        scale_z = (1 - t_x) * z0_dist.variance() + t_x * z1_dist.variance()
 
         z = tfp.distributions.Normal(loc=loc_z, scale=scale_z)
 
@@ -225,8 +230,8 @@ class CEVAEModel(Model):
         y1_pred = self.decoder_y1(z.sample())
 
         t = tf.cast(t, tf.float32)
-        loc_y = (1-t)*y0_pred.mean() + t*y1_pred.mean()
-        scale_y = (1-t)*y0_pred.variance() + t*y1_pred.variance()
+        loc_y = (1 - t) * y0_pred.mean() + t * y1_pred.mean()
+        scale_y = (1 - t) * y0_pred.variance() + t * y1_pred.variance()
 
         y_pred = tfd.Independent(tfp.distributions.Normal(loc=loc_y, scale=scale_y))
 
@@ -246,7 +251,6 @@ class CEVAEModel(Model):
         x_bin = x[:, self.params['num_cont']:]
 
         with tf.GradientTape() as tape:
-
             """Encoder"""
 
             t_x = self.t_distribution(x)
@@ -255,7 +259,7 @@ class CEVAEModel(Model):
             y1_dist = self.y1_distribution(phi_y)
 
             t_x = tf.cast(t_x, tf.float32)
-            loc_y = (1-t_x)*y0_dist.mean() + t_x*y1_dist.mean()
+            loc_y = (1 - t_x) * y0_dist.mean() + t_x * y1_dist.mean()
             y0_var = tf.expand_dims(tf.math.reduce_variance(y0_dist.sample(), axis=1), axis=1)
             y1_var = tf.expand_dims(tf.math.reduce_variance(y1_dist.sample(), axis=1), axis=1)
             scale_y = (1 - t_x) * y0_var + t_x * y1_var
@@ -264,12 +268,11 @@ class CEVAEModel(Model):
 
             x_yt = tf.concat([x, y_x.sample()], -1)
 
-
             z0_dist = self.encoder_y0(x_yt)
             z1_dist = self.encoder_y1(x_yt)
 
-            loc_z = (1-t_x)*z0_dist.mean() + t_x*z1_dist.mean()
-            scale_z = (1-t_x)*z0_dist.variance() + t_x*z1_dist.variance()
+            loc_z = (1 - t_x) * z0_dist.mean() + t_x * z1_dist.mean()
+            scale_z = (1 - t_x) * z0_dist.variance() + t_x * z1_dist.variance()
 
             z = tfp.distributions.Normal(loc=loc_z, scale=scale_z)
 
@@ -284,8 +287,8 @@ class CEVAEModel(Model):
             y1_pred = self.decoder_y1(z.sample())
 
             t = tf.cast(t, tf.float32)
-            loc_y = (1-t)*y0_pred.mean() + t*y1_pred.mean()
-            scale_y = (1-t)*y0_pred.variance() + t*y1_pred.variance()
+            loc_y = (1 - t) * y0_pred.mean() + t * y1_pred.mean()
+            scale_y = (1 - t) * y0_pred.variance() + t * y1_pred.variance()
 
             y_pred = tfd.Independent(tfp.distributions.Normal(loc=loc_y, scale=scale_y))
 
@@ -316,7 +319,7 @@ class CEVAE(CausalModel):
         super().__init__(params)
         self.params = params
 
-    def fit_model(self, x, y, t, seed):
+    def fit_model(self, x, y, t, count, seed):
         directory_name = 'params/' + self.params['dataset_name']
         setSeed(seed)
         t = tf.cast(t, dtype=tf.float32)
@@ -344,6 +347,13 @@ class CEVAE(CausalModel):
 
         best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
 
+        if self.params['defaults']:
+            best_hps.values = {'n_fc_latent_y': self.params['n_fc_latent_y'],
+                               'hidden_phi_latent_y': self.params['hidden_phi_latent_y'],
+                               'n_fc_latent_x': self.params['n_fc_latent_x'],
+                               'hidden_phi_latent_x': self.params['hidden_phi_latent_x'],
+                               'hidden_phi_dec_t': self.params['hidden_phi_dec_t'],
+                               'n_fc_dec_t': self.params['n_fc_dec_t']}
         model = tuner.hypermodel.build(best_hps)
         model.fit(ytx,
                   epochs=self.params['epochs'],
@@ -351,6 +361,14 @@ class CEVAE(CausalModel):
                   batch_size=self.params['batch_size'],
                   verbose=self.params['verbose'],
                   validation_split=0.0)
+
+
+        if count == 0:
+            print(f"""The hyperparameter search is complete. the optimal hyperparameters are
+                  layer is n_fc_latent_y={best_hps.get('n_fc_latent_y')} hidden_phi_latent_y = {best_hps.get('hidden_phi_latent_y')}
+                  n_fc_latent_x = {best_hps.get('n_fc_latent_x')} hidden_phi_latent_x = {best_hps.get('hidden_phi_latent_x')}
+                  hidden_phi_dec_t = {best_hps.get('hidden_phi_dec_t')}, n_fc_dec_t = {best_hps.get('n_fc_dec_t')} """)
+            # print(model.summary())
 
         return model
 
@@ -371,11 +389,11 @@ class CEVAE(CausalModel):
         data_train, data_test = self.load_data(**kwargs)
 
         self.folder_ind = kwargs.get('folder_ind')
-
+        count = kwargs.get('count')
         if self.params['binary']:
-            model = self.fit_model(data_train['x'], data_train['y'], data_train['t'], seed=0)
+            model = self.fit_model(data_train['x'], data_train['y'], data_train['t'], count=count, seed=0)
         else:
-            model = self.fit_model(data_train['x'], data_train['ys'], data_train['t'], seed=0)
+            model = self.fit_model(data_train['x'], data_train['ys'], data_train['t'], count=count, seed=0)
 
         concat_pred = self.evaluate(data_test['x'], model)
 
