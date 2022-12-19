@@ -5,23 +5,25 @@ def find_params(model_name, dataset_name):
 
     params_SLearner_IHDP_a = {'dataset_name': "ihdp_a", 'num': 100, 'lr': 1e-3, 'patience': 40,
                               'batch_size': 64, 'reg_l2': .01, 'activation': 'linear',
-                              'epochs': 300, 'binary': False, 'n_fc': 9, 'verbose': 0, 'val_split': 0.0,
+                              'epochs': 300, 'binary': False, 'verbose': 0, 'val_split': 0.0,
                               'kernel_init': 'RandomNormal', 'max_trials': 10, 'defaults': True,
                               'n_fc': 3, 'hidden_phi': 200}
 
     params_SLearner_IHDP_b = {'dataset_name': "ihdp_b", 'num': 100, 'lr': 1e-3, 'patience': 40,
-                              'batch_size': 64, 'reg_l2': .01, 'activation': 'linear',
-                              'epochs': 300, 'binary': False, 'n_fc': 6, 'verbose': 0, 'val_split': 0.0,
+                              'batch_size': 64, 'reg_l2': .01, 'activation': 'linear', 'defaults': True,
+                              'epochs': 300, 'binary': False, 'n_fc': 3, 'hidden_phi': 200, 'verbose': 0, 'val_split': 0.0,
                               'kernel_init': 'GlorotNormal', 'max_trials': 30}
 
     params_SLearner_ACIC = {'dataset_name': "acic", 'num': 77, 'lr': 1e-3, 'patience': 40,
                             'batch_size': 256, 'reg_l2': .01, 'activation': 'linear',
-                            'val_split': 0.0, 'epochs': 300, 'binary': False, 'n_fc': 7, 'verbose': 0, 
+                            'val_split': 0.0, 'epochs': 300, 'binary': False, 'n_fc': 3, 'hidden_phi': 200,
+                            'verbose': 0,
                             'kernel_init': 'RandomNormal', 'max_trials': 30}
 
     params_SLearner_JOBS = {'dataset_name': "jobs", 'num': 100, 'lr': 1e-3, 'patience': 40,
                             'batch_size': 128, 'reg_l2': .01, 'activation': 'sigmoid',
-                            'val_split': 0.0, 'epochs': 50, 'binary': True, 'n_fc': 5, 'verbose': 0,
+                            'val_split': 0.0, 'epochs': 50, 'binary': True, 'n_fc': 3, 'hidden_phi': 200,
+                            'verbose': 0,
                             'kernel_init': 'RandomNormal', 'max_trials': 20}
 
     """TLEARNER"""

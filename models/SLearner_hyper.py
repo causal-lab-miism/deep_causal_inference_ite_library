@@ -56,7 +56,7 @@ class SLearner(CausalModel):
         super().__init__(params)
         self.params = params
 
-    def fit_model(self, x, y, t, seed):
+    def fit_model(self, x, y, t, seed, count):
         directory_name = 'params/' + self.params['dataset_name']
         setSeed(seed)
 
@@ -82,17 +82,18 @@ class SLearner(CausalModel):
         tuner.search(x_t, y, epochs=50, validation_split=0.2, callbacks=[stop_early], verbose=1)
 
         best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
-        if self.params['dafaults']:
-            best_hps.values = {'n_fc': self.params['n_fc'], 'n_hidden_phi':self.params['n_hidden_phi'] }
+        if self.params['defaults']:
+            best_hps.values = {'n_fc': self.params['n_fc'], 'hidden_phi': self.params['hidden_phi']}
 
         model = tuner.hypermodel.build(best_hps)
-
-        # print(f"""The hyperparameter search is complete. the optimal hyperparameters are
-        #       layer is n_fc={best_hps.get('n_fc')} - hidden_phi = {best_hps.get('hidden_phi')}""")
 
         model.fit(x_t, y, epochs=self.params['epochs'], callbacks=callbacks('mse'),
                   batch_size=self.params['batch_size'], validation_split=0.0,
                   verbose=self.params['verbose'])
+        if count == 0:
+            print(f"""The hyperparameter search is complete. the optimal hyperparameters are
+                  layer is n_fc={best_hps.get('n_fc')} - hidden_phi = {best_hps.get('hidden_phi')}""")
+            print(model.summary())
 
         return model
 
@@ -109,11 +110,11 @@ class SLearner(CausalModel):
         data_train, data_test = self.load_data(**kwargs)
 
         self.folder_ind = kwargs.get('folder_ind')
-
+        count = kwargs.get('count')
         if self.params['binary']:
-            model = self.fit_model(data_train['x'], data_train['y'], data_train['t'], seed=0)
+            model = self.fit_model(data_train['x'], data_train['y'], data_train['t'], seed=0, count=count)
         else:
-            model = self.fit_model(data_train['x'], data_train['ys'], data_train['t'], seed=0)
+            model = self.fit_model(data_train['x'], data_train['ys'], data_train['t'], seed=0, count=count)
 
         concat_pred = self.evaluate(data_test['x'], model)
 
