@@ -103,10 +103,10 @@ def find_params(model_name, dataset_name):
                             'n_fc': 3, 'hidden_phi': 200, 'n_fc_y0': 3, 'hidden_y0': 200, 'n_fc_y1': 3,
                             'hidden_y1': 200}
 
-    params_TARnet_JOBS = {'dataset_name': "jobs", 'num': 100, 'lr': 1e-2, 'patience': 40, 'batch_size': 256,
+    params_TARnet_JOBS = {'dataset_name': "jobs", 'num': 100, 'lr': 1e-2, 'patience': 40, 'batch_size': 64,
                           'reg_l2': .01,  'activation': 'sigmoid', 'epochs': 30, 'binary': True,
-                          'val_split': 0.0, 'verbose': 0, 'kernel_init': 'GlorotNormal', 'max_trials': 20,
-                          'defaults': True, 'n_fc': 3, 'hidden_phi': 200, 'n_fc_y0': 3, 'hidden_y0': 200,
+                          'val_split': 0.0, 'verbose': 0, 'kernel_init': 'RandomNormal', 'max_trials': 20,
+                          'defaults': False, 'n_fc': 3, 'hidden_phi': 200, 'n_fc_y0': 3, 'hidden_y0': 200,
                           'n_fc_y1': 3, 'hidden_y1': 200}
 
     """DRAGONNET"""
