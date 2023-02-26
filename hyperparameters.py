@@ -87,9 +87,9 @@ def find_params(model_name, dataset_name):
 
     params_TARnet_IHDP_a = {'dataset_name': "ihdp_a", 'num': 100, 'lr': 1e-4, 'patience': 40, 'batch_size': 64,
                             'reg_l2': .01, 'activation': 'linear', 'epochs': 300, 'binary': False, 'verbose': 0,
-                            'val_split': 0.0, 'kernel_init': 'RandomNormal', 'max_trials': 10, 'defaults': True,
-                            'n_fc': 3, 'hidden_phi': 200, 'n_fc_y0': 3, 'hidden_y0': 100, 'n_fc_y1': 3,
-                            'hidden_y1': 100}
+                            'val_split': 0.0, 'kernel_init': 'RandomNormal', 'max_trials': 10, 'defaults': False,
+                            'n_fc': 8, 'hidden_phi': 208, 'n_fc_y0': 10, 'hidden_y0': 416, 'n_fc_y1': 4,
+                            'hidden_y1': 480}
 
     params_TARnet_IHDP_b = {'dataset_name': "ihdp_b", 'num': 100, 'lr': 1e-4, 'patience': 5, 'batch_size': 32,
                             'reg_l2': .01, 'activation': 'linear', 'epochs': 300, 'binary': False, 'verbose': 0,
@@ -207,8 +207,10 @@ def find_params(model_name, dataset_name):
                           'verbose': 0, 'kernel_init': 'GlorotNormal'}
 
     params_CFRNet_JOBS = {'dataset_name': "jobs", 'num': 100, 'lr': 1e-2, 'patience': 40, 'tuner_batch_size': 512,
-                          'hidden_phi': 200, 'batch_size': 1024, 'reg_l2': .01, 'activation': 'sigmoid', 'epochs': 50,
-                          'binary': True, 'verbose': 0, 'kernel_init': 'RandomNormal'}
+                          'hidden_phi': 200, 'batch_size': 512, 'reg_l2': .01, 'activation': 'sigmoid', 'epochs': 30,
+                          'binary': True, 'verbose': 0, 'kernel_init': 'RandomNormal', 'defaults': False,
+                            'n_fc': 3, 'n_fc_y0': 3, 'hidden_y0': 100, 'n_fc_y1': 3, 'hidden_y1': 100,
+                            'n_fc_t': 3, 'hidden_t': 100}
 
     """GANITE"""
 

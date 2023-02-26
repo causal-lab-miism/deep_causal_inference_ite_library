@@ -88,17 +88,18 @@ class TARnet(CausalModel):
             seed=0)
 
         yt = tf.concat([y, t], axis=1)
-        stop_early = [TerminateOnNaN(), EarlyStopping(monitor='val_regression_loss', patience=5)]
-        tuner.search(x, yt, epochs=50, validation_split=0.2, callbacks=[stop_early], verbose=1)
-
-        best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
 
         if self.params['defaults']:
+            best_hps = kt.HyperParameters()
             best_hps.values = {'n_fc': self.params['n_fc'], 'hidden_phi': self.params['hidden_phi'],
                                'n_fc_y0': self.params['n_fc_y0'], 'n_fc_y1': self.params['n_fc_y1'],
                                'hidden_y1': self.params['hidden_y1'], 'hidden_y0': self.params['hidden_y0']}
-
-        model = tuner.hypermodel.build(best_hps)
+            model = tuner.hypermodel.build(best_hps)
+        else:
+            stop_early = [TerminateOnNaN(), EarlyStopping(monitor='val_regression_loss', patience=5)]
+            tuner.search(x, yt, epochs=50, validation_split=0.2, callbacks=[stop_early], verbose=1)
+            best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
+            model = tuner.hypermodel.build(best_hps)
 
         model.fit(x=x, y=yt,
                   callbacks=callbacks('regression_loss'),
