@@ -57,9 +57,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Causal Model')
-    parser.add_argument("--model-name", default="TARnet", type=str)
-    parser.add_argument("--ipm-type", default=None, type=str)
-    parser.add_argument("--dataset-name", default="ihdp_a", type=str)
+    parser.add_argument("--model-name", default="CFRNet", type=str)
+    parser.add_argument("--ipm-type", default='wasserstein', type=str)
+    parser.add_argument("--dataset-name", default="jobs", type=str)
     parser.add_argument("--num", default=100, type=int)
     args = parser.parse_args()
     main(args)

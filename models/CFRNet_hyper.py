@@ -478,9 +478,9 @@ class CFRNet(CausalModel):
         model = tuner.hypermodel.build(best_hps)
 
         if self.params['ipm_type'] == 'weighted':
-            monitor_metric = 'loss'
+            monitor_metric = 'weighted_mmdsq_loss'
         elif self.params['ipm_type'] == 'mmdsq':
-            monitor_metric = 'cfrnet_loss'
+            monitor_metric = 'mmdsq_loss'
         else:
             monitor_metric = 'cfrnet_loss'
 
